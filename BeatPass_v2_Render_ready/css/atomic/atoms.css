@@ -1,0 +1,53 @@
+/* FLUJO: Estilos pequeños compartidos; páginas los combinan con molecules.css. */
+/* ATOMOS: imagen vectorial del logo, sin distorsión. */
+.logo-link .logo-image {
+    display: block;
+    flex: 0 0 auto;
+    width: 74px;
+    max-width: 25vw;
+    height: auto;
+    object-fit: contain;
+}
+@media (max-width: 768px) {
+    .logo-link .logo-image { width: 64px; max-width: 20vw; }
+}
+@media (max-width: 380px) {
+    .logo-link .logo-image { width: 56px; max-width: 19vw; }
+}
+
+
+/* ===== ÁTOMOS COMPARTIDOS: botones, entradas, mensajes y etiquetas ===== */
+.bp-button {
+  min-height: 50px; display:inline-flex; align-items:center; justify-content:center; gap:.6rem;
+  border-radius:12px; border:1px solid transparent; padding:.85rem 1.3rem;
+  font:700 .94rem/1.3 var(--font-family); cursor:pointer; text-decoration:none;
+  transition: background .18s ease,transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.bp-button--primary {background:linear-gradient(125deg,#00d4ff,#0099ff); color:#06111d;}
+.bp-button--primary:hover {color:#06111d; box-shadow:0 14px 34px rgba(0,194,255,.23); transform:translateY(-1px);}
+.bp-button--secondary {background:#172033;color:#e9f5ff;border-color:#37485f;}
+.bp-button--secondary:hover {color:white;background:#202b43;border-color:#66dfff;}
+.bp-button--ghost {background:transparent;color:#6de6ff;border-color:#34445d;}
+.bp-button--ghost:hover {color:white;border-color:#6de6ff;}
+.bp-button--wide {width:100%;}
+.bp-button:focus-visible {outline:3px solid #85e9ff;outline-offset:3px;}
+.bp-button:disabled {opacity:.54;cursor:not-allowed;transform:none;box-shadow:none;}
+.bp-input {width:100%;min-height:51px;padding:.86rem 1rem;border-radius:12px;
+  background:#151c2b;border:1px solid #35445b;color:#fff;font:400 .95rem var(--font-family);
+  transition:border-color .18s ease,box-shadow .18s ease;}
+.bp-input::placeholder {color:#9babbd;opacity:1;}
+.bp-input:focus {outline:none;border-color:#21d4ff;box-shadow:0 0 0 3px rgba(0,212,255,.15);}
+.bp-input[aria-invalid="true"] {border-color:#ff8a9a;}
+textarea.bp-input {min-height:100px;resize:vertical;line-height:1.5;}
+.bp-label {color:#e5edfa;font-size:.85rem;font-weight:650;}
+.bp-help {font-size:.75rem;line-height:1.55;color:#aab9cd;}
+.bp-feedback {min-height:1.4rem;color:#b9cadd;font-size:.8rem;line-height:1.6;}
+.bp-feedback[data-state="error"] {color:#ffa5b0;}
+.bp-feedback[data-state="info"] {color:#91e3f8;}
+.bp-feedback[data-state="success"] {color:#99e3c3;}
+.bp-badge {display:inline-flex;align-items:center;gap:.35rem;width:max-content;
+  padding:.37rem .67rem;border-radius:999px;background:rgba(0,212,255,.11);color:#69e9ff;
+  border:1px solid rgba(0,212,255,.24);font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;}
+.bp-text-link {color:#63e4ff;text-decoration:none;font-size:.84rem;font-weight:650;}
+.bp-text-link:hover,.bp-text-link:focus-visible {color:#fff;text-decoration:underline;}
+@media(prefers-reduced-motion:reduce) {.bp-button,.bp-input {transition:none;} .bp-button--primary:hover{transform:none;}}

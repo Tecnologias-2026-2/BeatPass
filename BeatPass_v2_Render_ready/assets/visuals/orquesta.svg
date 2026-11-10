@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 660" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Orquesta sobre escenario">
+<defs><radialGradient id="back" cx=".52" cy=".17" r=".88"><stop stop-color="#a3756b"/><stop offset=".48" stop-color="#593c55"/><stop offset="1" stop-color="#16152e"/></radialGradient><linearGradient id="wood"><stop stop-color="#d1a06d"/><stop offset=".4" stop-color="#8f563a"/><stop offset="1" stop-color="#4e2b29"/></linearGradient><linearGradient id="spot" x2="0" y2="1"><stop stop-color="#efcda3" stop-opacity=".25"/><stop offset="1" stop-color="#efcda3" stop-opacity="0"/></linearGradient></defs>
+<rect width="900" height="660" fill="url(#back)"/><path d="M100 0 0 560 410 560ZM790 0 490 570 900 570Z" fill="url(#spot)"/><g fill="#ecd5b6" opacity=".26"><circle cx="90" cy="104" r="7"/><circle cx="235" cy="85" r="7"/><circle cx="385" cy="96" r="7"/><circle cx="535" cy="84" r="7"/><circle cx="680" cy="95" r="7"/><circle cx="813" cy="100" r="7"/></g>
+<path d="M0 510q220-76 455-10t445 0v160H0z" fill="#171524"/>
+<g fill="#111323" stroke="#111323" stroke-linecap="round">
+ <circle cx="195" cy="270" r="42"/><path d="M147 308q47-26 93 6l30 204-150 20z"/><path d="m150 364-83 104 17 22 108-87z"/><path d="m224 364 107 59-8 25-121-31z"/>
+ <circle cx="486" cy="256" r="46"/><path d="M430 294q53-22 106 2l59 235-207 20z"/><path d="m449 354-131 75 9 29 156-63z"/><path d="m535 343 106 76-12 28-126-57z"/>
+ <circle cx="734" cy="284" r="43"/><path d="M692 314q47-20 89 6l45 224-172 0z"/><path d="m708 373-108 52 8 25 129-43z"/><path d="m763 372 95 76-13 25-122-58z"/>
+</g>
+<g fill="url(#wood)" stroke="#e4bc92" stroke-width="3"><ellipse cx="318" cy="427" rx="68" ry="37" transform="rotate(-27 318 427)"/><ellipse cx="617" cy="434" rx="71" ry="39" transform="rotate(16 617 434)"/><ellipse cx="847" cy="455" rx="62" ry="33" transform="rotate(29 847 455)"/></g>
+<g stroke="#d5a982" stroke-width="8" stroke-linecap="round"><path d="m343 410 106-153"/><path d="m597 418-132-164"/><path d="m829 445-118-141"/></g>
+<g stroke="#eedbd0" stroke-width="4" stroke-linecap="round" opacity=".83"><path d="M160 257 402 433M390 258l260 181M666 286l226 169"/></g>
+<g fill="#0b1021"><path d="M27 485h106v19H27zM292 507h130v23H292zM563 507h123v23H563z"/></g>
+<g fill="#eccdb1" opacity=".35"><ellipse cx="370" cy="620" rx="490" ry="43"/></g>
+</svg>

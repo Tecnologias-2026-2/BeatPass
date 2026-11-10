@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- FLUJO: Ficha -> event-detail.js -> api.js -> backend/events.py / cart.py. -->
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Información del evento en BeatPass"><title>Detalle de evento | BeatPass</title>
+<link rel="stylesheet" href="../css/styles.css"><link rel="stylesheet" href="../css/atomic/atoms.css"><link rel="stylesheet" href="../css/atomic/molecules.css"><link rel="stylesheet" href="../css/atomic/organisms.css"><link rel="stylesheet" href="../css/pages/event-detail.css">
+<link rel="icon" type="image/svg+xml" href="../assets/logo-principal.svg"></head>
+<body><div id="app" class="min-h-screen">
+<!-- BEATPASS HEADER START -->
+<!-- FLUJO: Header fuente; tools/build_components.py lo copia a las páginas; header.js lo activa. -->
+<!-- Organismo: encabezado compartido, generado como HTML estático.
+     Nunca depende de JS para ser visible. -->
+<header class="header" role="banner">
+    <div class="navbar">
+        <div class="navbar-container">
+            <!-- FLUJO: Logo compartido; tools/build_components.py lo inserta en el header. -->
+<!-- MOLECULA: átomo visual SVG + nombre del producto + enlace. -->
+<a href="../pages/destacados.html" data-target="destacados" class="logo-link" aria-label="BeatPass - Ir a eventos destacados">
+    <img src="../assets/logo-principal.svg" alt="" class="logo-image" width="792" height="612">
+    <span class="logo-text">BEATPASS</span>
+</a>
+            <nav aria-label="Navegación principal" class="nav-menu">
+                <a href="../pages/destacados.html" data-target="destacados" class="nav-link">Inicio</a>
+                <a href="../pages/catalog.html" data-target="catalog" class="nav-link">Catálogo</a>
+            </nav>
+            <div class="nav-actions">
+                <div class="nav-actions-group">
+                    <a href="../pages/cart.html" data-target="cart" class="icon-btn cart-btn" aria-label="Ver carrito" title="Ver carrito">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span class="cart-count" id="header-cart-count" hidden></span>
+                    </a>
+                    <a href="../pages/tickets.html" data-target="tickets" class="nav-link-icon nav-desktop-only" aria-label="Mis boletos">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 7.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 0 1-5 0v-9z"></path><path d="M9 2.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 0 1-5 0v-9z"></path><path d="M16 2.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 0 1-5 0v-9z"></path></svg>
+                        <span class="nav-link-text">Mis Boletos</span>
+                    </a>
+                    <a href="../pages/admin/dashboard.html" id="header-admin-link" class="nav-link-icon nav-desktop-only" aria-label="Panel de eventos" hidden>
+                        <span class="nav-link-text">Panel</span>
+                    </a>
+                    <!-- FLUJO: session.js lee el usuario; header.js muestra nombre y enlace a pages/profile.html. -->
+                    <a href="../pages/profile.html" class="bp-header-user nav-desktop-only" id="header-user-greeting" aria-label="Ir a mi perfil" hidden>Hola, <strong id="header-user-firstname"></strong></a>
+                    <a href="../pages/login.html" data-target="login" class="nav-link-icon nav-desktop-only" id="header-login-link" aria-label="Iniciar sesión">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4z"></path><path d="M6 20c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4"></path></svg>
+                        <span class="nav-link-text" id="header-auth-label">Entrar</span>
+                    </a>
+                    <button type="button" class="nav-link-icon nav-desktop-only" id="header-logout-btn" aria-label="Cerrar sesión" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span class="nav-link-text">Salir</span>
+                    </button>
+                </div>
+                <span class="bp-header-mobile-user" id="header-mobile-user-greeting" hidden><span id="header-mobile-user-firstname"></span></span>
+                <button type="button" class="nav-toggle nav-mobile-only" id="mobile-menu-toggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobile-menu" hidden>
+            <nav class="mobile-menu-nav" aria-label="Navegación móvil">
+                <a href="../pages/destacados.html" data-target="destacados" class="mobile-menu-link">Inicio</a>
+                <a href="../pages/catalog.html" data-target="catalog" class="mobile-menu-link">Catálogo</a>
+                <a href="../pages/tickets.html" data-target="tickets" class="mobile-menu-link">Mis Boletos</a>
+                <a href="../pages/profile.html" id="mobile-profile-link" data-target="profile" class="mobile-menu-link" hidden>Mi perfil</a>
+                <a href="../pages/admin/dashboard.html" id="mobile-admin-link" class="mobile-menu-link" hidden>Panel de eventos</a>
+                <a href="../pages/login.html" data-target="login" class="mobile-menu-link mobile-menu-cta" id="mobile-auth-link">Entrar</a>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- BEATPASS HEADER END -->
+<main class="bp-event-detail" id="main-content"><div class="bp-event-detail__container">
+<a class="bp-event-detail__back" href="destacados.html">← Volver a destacados</a>
+<div id="event-detail-content" class="bp-event-detail__grid" aria-live="polite">
+<div class="bp-event-detail__art"><img id="event-detail-image" src="../assets/visuals/concierto.svg" alt="Portada del evento"></div>
+<article class="bp-event-detail__card"><span class="bp-event-detail__badge">EVENTO</span><p id="event-detail-category" class="bp-event-detail__category">Evento publicado</p>
+<h1 id="event-detail-title">Cargando información del evento…</h1><p id="event-detail-description">Consulta la descripción y los detalles del evento.</p>
+<dl class="bp-event-detail__facts"><div><dt>Fecha</dt><dd id="event-detail-date">Por confirmar</dd></div><div><dt>Hora</dt><dd id="event-detail-time">Por confirmar</dd></div><div><dt>Lugar</dt><dd id="event-detail-venue">Por confirmar</dd></div><div><dt>Precio</dt><dd id="event-detail-price">Por consultar</dd></div></dl>
+<section class="bp-event-detail__prices" aria-labelledby="event-prices-heading">
+  <div class="bp-event-detail__prices-heading"><h2 id="event-prices-heading">Zonas y precios</h2><p>Consulta las zonas y la disponibilidad del evento.</p></div>
+  <ul id="event-detail-price-list" class="bp-event-detail__price-list"><li>Selecciona un evento para consultar sus categorías.</li></ul>
+</section>
+<p id="event-detail-demo-note" class="bp-event-detail__note">Consulta la disponibilidad antes de realizar una reserva.</p>
+<div id="event-detail-cart-controls" class="bp-event-detail__cart-controls" hidden>
+  <label for="event-detail-zone">Zona de entrada</label>
+  <select id="event-detail-zone" aria-describedby="event-detail-purchase-status"></select>
+  <label for="event-detail-quantity">Cantidad</label>
+  <input id="event-detail-quantity" type="number" min="1" max="10" value="1" step="1">
+  <p class="bp-event-detail__note">Añadir al carrito no aparta cupos. Para retener entradas, crea una reserva temporal desde el carrito.</p>
+</div>
+<div class="bp-event-detail__actions"><button type="button" class="btn btn-primary" id="event-detail-buy" aria-describedby="event-detail-purchase-status">Comprar entradas <span aria-hidden="true">→</span></button><a href="destacados.html" class="btn btn-secondary">Otros destacados</a></div><p id="event-detail-purchase-status" class="bp-event-detail__purchase-status" role="status" aria-live="polite"></p>
+</article></div></div></main>
+<!-- BEATPASS SITE FOOTER START -->
+<!-- FLUJO: Footer fuente; build_components.py lo inserta en páginas HTML. -->
+<!-- Organismo compartido: enlaces informativos fuera de la navegación principal. -->
+<footer class="bp-site-footer" aria-label="Pie de página de BeatPass">
+  <div class="bp-site-footer__inner">
+    <a class="bp-site-footer__brand" href="../pages/destacados.html" aria-label="BeatPass, ir a eventos destacados">
+      <img src="../assets/logo-principal.svg" alt="" width="56" height="43">
+      <span>BEATPASS</span>
+    </a>
+    <p class="bp-site-footer__tagline">Tu lugar en el show empieza aquí.</p>
+    <nav class="bp-site-footer__links" aria-label="Información y navegación del pie de página">
+      <a href="../pages/destacados.html">Inicio</a>
+      <a href="../pages/catalog.html">Catálogo</a>
+      <a href="../index.html#quienes-somos">Nosotros</a>
+      <a href="../index.html#como-funciona">Cómo funciona</a>
+    </nav>
+    <p class="bp-site-footer__copyright">© 2026 BeatPass. Hecho para vivirlo.</p>
+  </div>
+</footer>
+<!-- BEATPASS SITE FOOTER END -->
+</div>
+<script src="../js/core/storage.js"></script><script src="../js/core/paths.js"></script><script src="../js/core/session.js"></script><script src="../js/components/organisms/header.js"></script>
+<script src="../js/core/demo-events.js"></script><script src="../js/core/config.js"></script><script src="../js/core/api.js"></script><script src="../js/pages/event-detail.js"></script>
+</body></html>

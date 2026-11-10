@@ -1,0 +1,14 @@
+/* FLUJO: payment-result.html -> payment-result.js. Componentes del estado de pago TEST. */
+.bp-payment-page{background:#07152b;color:#eaf8ff;}
+.bp-payment-page .skip-link{position:absolute;top:-80px;left:12px;z-index:9999;padding:8px 12px;background:#fff;color:#081c32;border-radius:8px;}
+.bp-payment-page .skip-link:focus{top:12px;}
+.bp-payment-result{background:linear-gradient(155deg,#07152b,#132a49);min-height:65vh;display:grid;place-items:center;padding:5rem 1.25rem 4rem;}
+.bp-payment-panel{max-width:700px;width:100%;padding:clamp(1.5rem,5vw,3rem);border:1px solid rgba(72,164,213,.25);border-radius:22px;background:rgba(13,35,65,.9);box-shadow:0 14px 45px rgba(0,0,0,.18);}
+.bp-payment-panel h1{font-size:clamp(1.6rem,3vw,2.25rem);color:#eaf8ff;margin:.4rem 0 1rem;}
+.bp-payment-kicker{font-size:.78rem;font-weight:800;letter-spacing:.14em;color:#40d9f1;}
+#payment-result-message{line-height:1.7;color:#d0dff0;}
+.bp-payment-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem;}
+.bp-payment-action{appearance:none;border:1px solid #40d9f1;border-radius:11px;padding:.77rem 1.1rem;background:#00c8ec;color:#081c32;font:inherit;font-weight:750;cursor:pointer;text-decoration:none;}
+.bp-payment-secondary{background:transparent;color:#eaf8ff;}
+.bp-payment-action:focus-visible{outline:3px solid #fff;outline-offset:2px;}
+.bp-payment-warning{font-size:.83rem;color:#d6a3a5;margin-top:2rem;line-height:1.5;}

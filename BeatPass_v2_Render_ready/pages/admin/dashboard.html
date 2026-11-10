@@ -1,0 +1,215 @@
+<!doctype html>
+<!-- FLUJO: Formulario -> admin-events.js -> api.js -> backend/events.py. -->
+<html lang="es">
+<head>
+ <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="description" content="Panel visual de organización de eventos BeatPass v2.">
+ <title>Panel de eventos · BeatPass</title>
+ <link rel="stylesheet" href="../../css/styles.css">
+ <link rel="stylesheet" href="../../css/atomic/atoms.css">
+ <link rel="stylesheet" href="../../css/atomic/molecules.css">
+ <link rel="stylesheet" href="../../css/atomic/organisms.css">
+ <link rel="stylesheet" href="../../css/pages/admin.css">
+ <link rel="icon" type="image/svg+xml" href="../../assets/logo-principal.svg">
+</head>
+<body>
+<div id="app" class="min-h-screen">
+<!-- BEATPASS HEADER START -->
+<!-- FLUJO: Header fuente; tools/build_components.py lo copia a las páginas; header.js lo activa. -->
+<!-- Organismo: encabezado compartido, generado como HTML estático.
+     Nunca depende de JS para ser visible. -->
+<header class="header" role="banner">
+    <div class="navbar">
+        <div class="navbar-container">
+            <!-- FLUJO: Logo compartido; tools/build_components.py lo inserta en el header. -->
+<!-- MOLECULA: átomo visual SVG + nombre del producto + enlace. -->
+<a href="../../pages/destacados.html" data-target="destacados" class="logo-link" aria-label="BeatPass - Ir a eventos destacados">
+    <img src="../../assets/logo-principal.svg" alt="" class="logo-image" width="792" height="612">
+    <span class="logo-text">BEATPASS</span>
+</a>
+            <nav aria-label="Navegación principal" class="nav-menu">
+                <a href="../../pages/destacados.html" data-target="destacados" class="nav-link">Inicio</a>
+                <a href="../../pages/catalog.html" data-target="catalog" class="nav-link">Catálogo</a>
+            </nav>
+            <div class="nav-actions">
+                <div class="nav-actions-group">
+                    <a href="../../pages/cart.html" data-target="cart" class="icon-btn cart-btn" aria-label="Ver carrito" title="Ver carrito">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span class="cart-count" id="header-cart-count" hidden></span>
+                    </a>
+                    <a href="../../pages/tickets.html" data-target="tickets" class="nav-link-icon nav-desktop-only" aria-label="Mis boletos">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 7.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 0 1-5 0v-9z"></path><path d="M9 2.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 0 1-5 0v-9z"></path><path d="M16 2.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 0 1-5 0v-9z"></path></svg>
+                        <span class="nav-link-text">Mis Boletos</span>
+                    </a>
+                    <a href="../../pages/admin/dashboard.html" id="header-admin-link" class="nav-link-icon nav-desktop-only" aria-label="Panel de eventos" hidden>
+                        <span class="nav-link-text">Panel</span>
+                    </a>
+                    <!-- FLUJO: session.js lee el usuario; header.js muestra nombre y enlace a pages/profile.html. -->
+                    <a href="../../pages/profile.html" class="bp-header-user nav-desktop-only" id="header-user-greeting" aria-label="Ir a mi perfil" hidden>Hola, <strong id="header-user-firstname"></strong></a>
+                    <a href="../../pages/login.html" data-target="login" class="nav-link-icon nav-desktop-only" id="header-login-link" aria-label="Iniciar sesión">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4z"></path><path d="M6 20c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4"></path></svg>
+                        <span class="nav-link-text" id="header-auth-label">Entrar</span>
+                    </a>
+                    <button type="button" class="nav-link-icon nav-desktop-only" id="header-logout-btn" aria-label="Cerrar sesión" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span class="nav-link-text">Salir</span>
+                    </button>
+                </div>
+                <span class="bp-header-mobile-user" id="header-mobile-user-greeting" hidden><span id="header-mobile-user-firstname"></span></span>
+                <button type="button" class="nav-toggle nav-mobile-only" id="mobile-menu-toggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobile-menu" hidden>
+            <nav class="mobile-menu-nav" aria-label="Navegación móvil">
+                <a href="../../pages/destacados.html" data-target="destacados" class="mobile-menu-link">Inicio</a>
+                <a href="../../pages/catalog.html" data-target="catalog" class="mobile-menu-link">Catálogo</a>
+                <a href="../../pages/tickets.html" data-target="tickets" class="mobile-menu-link">Mis Boletos</a>
+                <a href="../../pages/profile.html" id="mobile-profile-link" data-target="profile" class="mobile-menu-link" hidden>Mi perfil</a>
+                <a href="../../pages/admin/dashboard.html" id="mobile-admin-link" class="mobile-menu-link" hidden>Panel de eventos</a>
+                <a href="../../pages/login.html" data-target="login" class="mobile-menu-link mobile-menu-cta" id="mobile-auth-link">Entrar</a>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- BEATPASS HEADER END -->
+<section id="admin-access" class="bp-admin-access" role="status" aria-live="polite">
+  <h1>Comprobando acceso al panel</h1>
+  <p data-access-message>Verificando tu sesión con BeatPass...</p>
+  <a data-access-login hidden class="bp-button bp-button--primary" href="../login.html">Iniciar sesión</a>
+</section>
+<main id="main-content" class="bp-admin" hidden>
+ <div class="bp-admin__container">
+  <div class="bp-admin__banner" role="note"><span class="bp-admin__live-dot" aria-hidden="true"></span><strong>Editor de eventos conectado a BeatPass</strong><span>Tus borradores se guardan en el servidor y requieren revisión administrativa antes de aparecer en el catálogo.</span></div>
+  <div class="bp-admin__shell">
+   <aside class="bp-admin__sidebar" aria-label="Navegación del panel">
+    <div class="bp-admin__sidebar-title"><span class="bp-admin__sidebar-symbol">✦</span><div><strong>BeatPass Studio</strong><small>Organización de eventos</small></div></div>
+    <nav class="bp-admin__sidenav" aria-label="Secciones de organización">
+      <a href="#resumen" class="bp-admin__navlink">▦ <span>Resumen</span></a>
+      <a href="#crear-evento" class="bp-admin__navlink">✚ <span>Crear evento</span></a>
+      <a href="#borradores" class="bp-admin__navlink">▤ <span>Mis borradores</span></a>
+      <a href="reviews.html" id="admin-review-link" class="bp-admin__navlink" hidden>✓ <span>Solicitudes</span></a>
+      <a href="#aprobaciones" class="bp-admin__navlink">✓ <span>Publicación</span></a>
+    </nav>
+    <div class="bp-admin__sidebar-bottom"><a href="../destacados.html">← Volver a Destacados</a><p>Los eventos pendientes nunca son públicos.</p></div>
+   </aside>
+   <div class="bp-admin__content">
+    <section id="resumen" class="bp-admin__intro" aria-labelledby="admin-heading">
+     <div><span class="bp-admin__eyebrow">TU ESPACIO DE CREACIÓN</span><h1 id="admin-heading">Haz que cada evento sea <em>inolvidable.</em></h1><p>Prepara tu propuesta, define entradas por zona y revisa cómo aparecerá en BeatPass.</p></div>
+     <a href="#crear-evento" class="bp-button bp-button--primary bp-admin__action">+ Crear evento</a>
+    </section>
+    <section class="bp-admin__stats" aria-label="Estado del panel">
+      <div class="bp-admin__stat"><span>✦</span><strong id="draft-count">0</strong><small>Borradores del servidor</small></div>
+      <div class="bp-admin__stat"><span>◷</span><strong>0</strong><small>En revisión</small></div>
+      <div class="bp-admin__stat"><span>✓</span><strong>0</strong><small>Eventos publicados por ti</small></div>
+    </section>
+    <section id="crear-evento" class="bp-admin__section" aria-labelledby="editor-heading">
+      <div class="bp-admin__section-heading"><div><span class="bp-admin__eyebrow">PASO 01 · PREPARAR</span><h2 id="editor-heading">Crear evento</h2><p>Completa la información que después será revisada por el equipo de BeatPass.</p></div></div>
+      <div class="bp-admin__editor-layout">
+       <form id="admin-event-form" class="bp-admin__form bp-admin__panel" novalidate>
+        <input type="hidden" id="draft-id">
+        <fieldset class="bp-admin__fieldset"><legend><span>01</span> Información general</legend>
+         <div class="bp-field"><label class="bp-label" for="event-title">Nombre del evento *</label><input class="bp-input" id="event-title" name="title" maxlength="90" placeholder="Ej.: Festival BeatPass 2027" required></div>
+         <div class="bp-field"><label class="bp-label" for="event-category">Categoría *</label><select class="bp-input" id="event-category" name="category" required><option value="">Selecciona una categoría</option><option value="Música">Música</option><option value="Teatro">Teatro</option><option value="Arte">Arte</option><option value="Cultural">Cultural</option><option value="Deportes">Deportes</option></select></div>
+         <div class="bp-field">
+          <label class="bp-label" for="event-cover-file">Imagen de portada</label>
+          <div class="bp-admin__upload-zone" id="admin-cover-dropzone">
+           <span class="bp-admin__upload-icon" aria-hidden="true">▧</span>
+           <div class="bp-admin__upload-info"><strong>Sube una imagen desde tu equipo</strong><span>JPG, PNG o WebP · máximo 8 MB · recomendable 16:9</span></div>
+           <label class="bp-admin__upload-button" for="event-cover-file">Elegir imagen</label>
+           <input class="bp-admin__file-input" id="event-cover-file" name="cover" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="event-cover-status">
+          </div>
+          <div class="bp-admin__upload-footer">
+           <span id="event-cover-status" class="bp-admin__upload-filename" role="status" aria-live="polite">Todavía no has seleccionado una portada.</span>
+           <button type="button" class="bp-admin__remove-cover" id="admin-remove-cover" disabled>Quitar portada</button>
+          </div>
+          <p class="bp-admin__helper">La imagen se optimiza y se guarda en el servidor con el borrador. No será pública antes de aprobar el evento.</p>
+         </div>
+         <div class="bp-field"><label class="bp-label" for="event-short">Resumen corto *</label><textarea class="bp-input bp-admin__textarea" id="event-short" name="short" maxlength="170" rows="2" placeholder="¿Qué hace especial este evento?" required></textarea></div>
+         <div class="bp-field"><label class="bp-label" for="event-description">Descripción completa *</label><textarea class="bp-input bp-admin__textarea" id="event-description" name="description" maxlength="1400" rows="4" placeholder="Artistas, programa, horarios de acceso, recomendaciones..." required></textarea></div>
+        </fieldset>
+        <fieldset class="bp-admin__fieldset"><legend><span>02</span> Fecha y lugar</legend>
+          <div class="bp-admin__two-col">
+           <div class="bp-field"><label class="bp-label" for="event-date">Fecha *</label><input class="bp-input" id="event-date" name="date" type="date" required></div>
+           <div class="bp-field"><label class="bp-label" for="event-time">Hora de inicio *</label><input class="bp-input" id="event-time" name="time" type="time" required></div>
+          </div>
+          <div class="bp-admin__two-col">
+           <div class="bp-field"><label class="bp-label" for="event-timezone">Zona horaria *</label>
+           <select class="bp-input" id="event-timezone" name="timezone" required>
+             <option value="America/Bogota">Bogotá / Colombia (UTC−5)</option>
+             <option value="America/Lima">Lima / Perú</option>
+             <option value="America/Mexico_City">Ciudad de México</option>
+             <option value="America/New_York">Nueva York</option>
+             <option value="Europe/Madrid">Madrid</option>
+           </select></div>
+           <div class="bp-field"><label class="bp-label" for="event-venue">Nombre del recinto *</label><input class="bp-input" id="event-venue" name="venue" maxlength="85" placeholder="Teatro Central" required></div>
+           <div class="bp-field"><label class="bp-label" for="event-city">Ciudad *</label><input class="bp-input" id="event-city" name="city" maxlength="75" placeholder="Bogotá" required></div>
+          </div>
+          <div class="bp-admin__two-col">
+           <div class="bp-field"><label class="bp-label" for="event-address">Dirección</label><input class="bp-input" id="event-address" name="address" maxlength="150" placeholder="Calle, número, localidad"></div>
+           <div class="bp-field"><label class="bp-label" for="event-seating">Tipo de entradas</label><select class="bp-input" id="event-seating" name="seating"><option value="General por zonas">Admisión general por zonas</option><option value="Asientos numerados">Asientos numerados (futuro mapa)</option></select></div>
+          </div>
+        </fieldset>
+        <fieldset class="bp-admin__fieldset"><legend><span>03</span> Zonas y lista de precios</legend>
+         <p class="bp-admin__helper">Añade por lo menos una zona. Define precio y cupos reales por zona: 0 significa que todavía no hay entradas a la venta. El precio «Desde» es el menor valor.</p>
+         <div id="admin-price-rows" aria-label="Zonas, precios y cupos" class="bp-admin__price-rows" aria-label="Zonas y precios"></div>
+         <button type="button" id="admin-add-price" class="bp-admin__outline-button">+ Añadir zona o precio</button>
+        </fieldset>
+        <div class="bp-admin__form-actions"><button type="button" class="bp-admin__outline-button" id="admin-clear-form">Nuevo formulario</button><button class="bp-button bp-button--primary" type="submit">Guardar borrador en BeatPass →</button></div>
+        <p id="admin-status" class="bp-admin__feedback" role="status" aria-live="polite">Guardar no publica. Después podrás enviar el borrador a revisión.</p>
+       </form>
+       <aside class="bp-admin__preview-col" aria-labelledby="preview-heading">
+        <div class="bp-admin__preview-sticky">
+          <div class="bp-admin__preview-heading"><span class="bp-admin__eyebrow">VISTA PREVIA EN TIEMPO REAL</span><h3 id="preview-heading">Así se verá tu evento</h3></div>
+          <article class="bp-admin__preview-card">
+           <div class="bp-admin__preview-cover"><img id="preview-image" alt="Portada del evento seleccionada" hidden><div id="preview-image-placeholder" class="bp-admin__preview-cover-empty"><span aria-hidden="true">▧</span><strong>Tu portada aparecerá aquí</strong><small>Selecciona una foto para personalizar el evento</small></div><span class="bp-admin__preview-badge">VISTA PREVIA · NO PUBLICADO</span></div>
+           <div class="bp-admin__preview-body"><small id="preview-category">Categoría</small><h4 id="preview-title">El nombre de tu evento</h4><p id="preview-short">Aquí aparecerá una breve presentación de tu experiencia.</p>
+             <div class="bp-admin__preview-facts"><span>◷ <span id="preview-date">Fecha y hora</span></span><span>⌖ <span id="preview-venue">Lugar del evento</span></span></div>
+             <div class="bp-admin__preview-prices"><div class="bp-admin__preview-prices-heading"><strong>Lista de precios</strong><span id="preview-from">Desde $0</span></div><ul id="preview-price-list"><li>General · $0</li></ul></div>
+             <p class="bp-admin__preview-warning">Vista previa de tus datos. El evento público solo cambiará cuando administración apruebe la revisión.</p>
+           </div>
+          </article>
+        </div>
+       </aside>
+      </div>
+    </section>
+    <section id="borradores" class="bp-admin__section" aria-labelledby="drafts-heading">
+      <div class="bp-admin__section-heading"><div><span class="bp-admin__eyebrow">PASO 02 · REVISAR</span><h2 id="drafts-heading">Mis eventos y borradores</h2><p>Aquí aparecen tus borradores, propuestas en revisión y eventos publicados.</p></div></div>
+      <div id="admin-drafts" class="bp-admin__draft-grid"><p class="bp-admin__empty">Todavía no tienes eventos guardados.</p></div>
+    </section>
+    <section id="aprobaciones" class="bp-admin__section" aria-labelledby="approval-heading">
+      <div class="bp-admin__approval"><div><span class="bp-admin__eyebrow">PASO 03 · PUBLICAR</span><h2 id="approval-heading">Revisión y aprobación</h2><p>Guarda el borrador y selecciona «Enviar a revisión» en la lista de tus eventos. Un administrador general distinto del autor debe aprobarlo. Las modificaciones posteriores también necesitan revisión.</p></div><div class="bp-admin__approval-track"><span>01 · Borrador</span><span>02 · En revisión</span><span>03 · Aprobado</span><span>04 · Publicado</span></div></div>
+    </section>
+   </div>
+  </div>
+ </div>
+</main>
+<!-- BEATPASS SITE FOOTER START -->
+<!-- FLUJO: Footer fuente; build_components.py lo inserta en páginas HTML. -->
+<!-- Organismo compartido: enlaces informativos fuera de la navegación principal. -->
+<footer class="bp-site-footer" aria-label="Pie de página de BeatPass">
+  <div class="bp-site-footer__inner">
+    <a class="bp-site-footer__brand" href="../../pages/destacados.html" aria-label="BeatPass, ir a eventos destacados">
+      <img src="../../assets/logo-principal.svg" alt="" width="56" height="43">
+      <span>BEATPASS</span>
+    </a>
+    <p class="bp-site-footer__tagline">Tu lugar en el show empieza aquí.</p>
+    <nav class="bp-site-footer__links" aria-label="Información y navegación del pie de página">
+      <a href="../../pages/destacados.html">Inicio</a>
+      <a href="../../pages/catalog.html">Catálogo</a>
+      <a href="../../index.html#quienes-somos">Nosotros</a>
+      <a href="../../index.html#como-funciona">Cómo funciona</a>
+    </nav>
+    <p class="bp-site-footer__copyright">© 2026 BeatPass. Hecho para vivirlo.</p>
+  </div>
+</footer>
+<!-- BEATPASS SITE FOOTER END -->
+</div>
+<script src="../../js/core/storage.js"></script>
+<script src="../../js/core/paths.js"></script>
+<script src="../../js/core/session.js"></script>
+<script src="../../js/components/organisms/header.js"></script>
+<script src="../../js/core/cover-images.js"></script>
+<script src="../../js/core/config.js"></script>
+<script src="../../js/core/api.js"></script>
+<script src="../../js/pages/admin-gate.js"></script>
+</body></html>

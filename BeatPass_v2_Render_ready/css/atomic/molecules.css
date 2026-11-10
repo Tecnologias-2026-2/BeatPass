@@ -1,0 +1,43 @@
+/* FLUJO: Combina campos y opciones de interfaz; usado en login, registro y panel. */
+/* MOLECULAS: el logotipo y el nombre forman la marca. */
+.logo-link { gap: 0.45rem; }
+
+
+/* ===== MOLÉCULAS: campo, selector de perfil, aviso y contraseña ===== */
+.bp-field {display:grid;gap:.43rem;min-width:0;}
+.bp-field__label-row {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+.bp-password-field {position:relative;}
+.bp-password-field .bp-input {padding-right:5.4rem;}
+.bp-password-toggle {position:absolute;right:.45rem;top:50%;transform:translateY(-50%);
+  border:0;background:transparent;padding:.55rem .6rem;border-radius:8px;color:#7ce8ff;
+  font:650 .72rem var(--font-family);cursor:pointer;}
+.bp-password-toggle:hover,.bp-password-toggle:focus-visible {background:#24354c;color:white;outline:2px solid #6ddfff;}
+.bp-role-switch {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem;padding:.32rem;
+  border:1px solid #33425a;border-radius:13px;background:#121b2b;}
+.bp-role-switch__link {min-height:39px;display:flex;align-items:center;justify-content:center;text-align:center;
+  border-radius:9px;padding:.45rem .35rem;color:#aebfd6;text-decoration:none;font-size:.77rem;font-weight:700;}
+.bp-role-switch__link:hover,.bp-role-switch__link:focus-visible{color:#fff;background:#243147;}
+.bp-role-switch__link[aria-current="true"] {background:#0b4770;color:#d5faff;box-shadow:inset 0 0 0 1px #1987ab;}
+.bp-role-options {border:0;display:grid;gap:.7rem;min-width:0;padding:0;margin:0;}
+.bp-role-options legend {padding:0 0 .65rem;color:#e5edfa;font-size:.86rem;font-weight:700;}
+.bp-role-options__grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;}
+.bp-role-option {display:flex;align-items:flex-start;gap:.7rem;border:1px solid #3b4d66;
+  background:#111a2a;padding:.9rem;border-radius:13px;cursor:pointer;min-width:0;}
+.bp-role-option:has(input:checked){border-color:#20cfff;background:#10283c;box-shadow:0 0 0 2px rgba(0,212,255,.09);}
+.bp-role-option:focus-within {outline:2px solid #66e6ff;outline-offset:2px;}
+.bp-role-option input {flex:0 0 auto;accent-color:#00cbf7;margin-top:.28rem;}
+.bp-role-option strong {color:white;display:block;font-size:.84rem;}
+.bp-role-option small {color:#b1c1d7;display:block;font-size:.73rem;line-height:1.55;margin-top:.23rem;}
+.bp-notice {display:flex;align-items:flex-start;gap:.65rem;border:1px solid rgba(0,212,255,.19);
+  border-radius:12px;padding:.85rem .95rem;background:rgba(0,163,214,.06);color:#c5dcef;
+  font-size:.8rem;line-height:1.6;}
+.bp-notice::before {content:'i';flex:0 0 21px;display:grid;place-items:center;width:21px;height:21px;
+  border:1px solid #28c4f2;border-radius:50%;color:#6ce7ff;font-weight:800;font-size:.75rem;}
+.bp-progress {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;list-style:none;padding:0;margin:0;}
+.bp-progress li {display:grid;gap:.4rem;text-align:center;font-size:.65rem;color:#9aaec6;}
+.bp-progress li::before {content:attr(data-step);display:grid;place-items:center;margin:auto;width:28px;height:28px;
+  border-radius:50%;background:#1e2a3d;color:#aabbd0;border:1px solid #42516a;font-size:.77rem;font-weight:750;}
+.bp-progress li[data-current="true"] {color:#a5f3ff;font-weight:700;}
+.bp-progress li[data-current="true"]::before {background:#00bde5;color:#06111d;border-color:#00d4ff;}
+.bp-progress li[data-complete="true"]::before {content:'✓';background:#143c48;color:#8febdf;border-color:#2b817f;}
+@media(max-width:420px){.bp-role-switch__link{font-size:.69rem}.bp-role-option{padding:.7rem;gap:.45rem}.bp-role-option small{font-size:.68rem}}

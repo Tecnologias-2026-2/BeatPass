@@ -1,0 +1,121 @@
+// FLUJO: data/demo-events.json -> build_components.py -> catalog-demo.js (solo ejemplo).
+/** Eventos de DEMOSTRACIÓN. Fuente editable: data/demo-events.json. Sin datos de inventario real. */
+(function (global) {
+  'use strict';
+  const app = global.BeatPass = global.BeatPass || {};
+  const events = [
+  {
+    "id": "rock-clasico",
+    "title": "Noche de Rock Clásico",
+    "category": "Música",
+    "short": "Revive los mejores clásicos del rock con bandas en vivo y un espectáculo de luces inolvidable.",
+    "description": "Una noche para cantar los grandes himnos del rock, disfrutar de guitarras en vivo y vivir una producción de luces memorable. Evento de demostración de BeatPass.",
+    "date": "15 jun 2027",
+    "time": "19:00",
+    "venue": "Estadio Nacional, Ciudad",
+    "image": "../assets/visuals/rock-clasico.webp",
+    "ticketTypes": [
+      {
+        "name": "General",
+        "price": 120,
+        "description": "Acceso general"
+      },
+      {
+        "name": "Preferencial",
+        "price": 180,
+        "description": "Zona preferente"
+      },
+      {
+        "name": "VIP",
+        "price": 260,
+        "description": "Zona cercana al escenario"
+      }
+    ]
+  },
+  {
+    "id": "teatro-sombras",
+    "title": "Obra Teatral: Sombras",
+    "category": "Teatro",
+    "short": "Una puesta en escena llena de emoción, misterio y personajes inolvidables.",
+    "description": "Una historia de luces y silencios, con personajes que exploran sus recuerdos bajo un escenario dramático. Evento de demostración de BeatPass.",
+    "date": "02 jul 2027",
+    "time": "19:30",
+    "venue": "Teatro Principal, Ciudad",
+    "image": "../assets/visuals/teatro-sombras.svg",
+    "ticketTypes": [
+      {
+        "name": "Platea general",
+        "price": 85,
+        "description": "Ubicación estándar"
+      },
+      {
+        "name": "Platea preferencial",
+        "price": 130,
+        "description": "Filas delanteras"
+      },
+      {
+        "name": "Palco",
+        "price": 190,
+        "description": "Vista elevada"
+      }
+    ]
+  },
+  {
+    "id": "jazz-moderno",
+    "title": "Concierto de Jazz Moderno",
+    "category": "Música",
+    "short": "Ritmos contemporáneos, improvisación y música en vivo en una velada especial.",
+    "description": "Un encuentro de músicos con arreglos contemporáneos, solos de improvisación y ambiente íntimo. Evento de demostración de BeatPass.",
+    "date": "25 jul 2027",
+    "time": "20:00",
+    "venue": "Auditorio Central, Ciudad",
+    "image": "../assets/visuals/orquesta.svg",
+    "ticketTypes": [
+      {
+        "name": "General",
+        "price": 150,
+        "description": "Acceso general"
+      },
+      {
+        "name": "Preferencial",
+        "price": 210,
+        "description": "Ubicación preferente"
+      },
+      {
+        "name": "VIP",
+        "price": 300,
+        "description": "Experiencia premium"
+      }
+    ]
+  },
+  {
+    "id": "arte-contemporaneo",
+    "title": "Exposición de Arte Contemporáneo",
+    "category": "Arte",
+    "short": "Explora nuevas miradas y obras sorprendentes en una muestra para todos.",
+    "description": "Una selección de expresiones visuales y propuestas creativas para descubrir el arte de nuestro tiempo. Evento de demostración de BeatPass.",
+    "date": "10 ago 2027",
+    "time": "10:00",
+    "venue": "Galería de Arte Nacional, Ciudad",
+    "image": "../assets/visuals/arte.svg",
+    "ticketTypes": [
+      {
+        "name": "Entrada general",
+        "price": 40,
+        "description": "Acceso a la exposición"
+      },
+      {
+        "name": "Entrada + visita guiada",
+        "price": 65,
+        "description": "Incluye recorrido guiado"
+      }
+    ]
+  }
+];
+  const enriched = events.map(event => {
+    const ticketTypes = Object.freeze(event.ticketTypes.map(type => Object.freeze(type)));
+    const minPrice = Math.min(...ticketTypes.map(type => type.price));
+    return Object.freeze({ ...event, ticketTypes, minPrice });
+  });
+  app.demoEvents = Object.freeze(enriched);
+})(window);
