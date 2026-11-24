@@ -1,9 +1,11 @@
-"""Correo transaccional: Resend por HTTPS; buzón aislado para pruebas automatizadas.
+"""Correo transaccional: Resend por HTTPS o Gmail SMTP; buzón aislado para pruebas automatizadas.
 No guarda claves ni tokens en Git; los enlaces temporales no se incluyen en el código.
 """
 # FLUJO: main.py genera enlaces con token_service.py y pide enviar correo desde aquí.
 import json
 import os
+import smtplib
+from email.message import EmailMessage
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
@@ -13,11 +15,17 @@ MAIL_MODE = os.getenv('MAIL_MODE', 'development' if APP_ENV == 'local' else 'res
 FRONTEND_URL = os.getenv('PUBLIC_FRONTEND_URL', 'http://127.0.0.1:8001' if APP_ENV == 'local' else '').strip().rstrip('/')
 MAIL_FROM = os.getenv('MAIL_FROM', '').strip()
 RESEND_API_KEY = os.getenv('RESEND_API_KEY', '').strip()
+GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD', '').strip()
 
 if APP_ENV != 'local':
-    if MAIL_MODE != 'resend' or not FRONTEND_URL.startswith('https://') or not MAIL_FROM or not RESEND_API_KEY:
-        raise RuntimeError('En Render configura MAIL_MODE=resend, PUBLIC_FRONTEND_URL=https://..., MAIL_FROM y RESEND_API_KEY.')
-
+    if MAIL_MODE == 'resend':
+        if not FRONTEND_URL.startswith('https://') or not MAIL_FROM or not RESEND_API_KEY:
+            raise RuntimeError('En Render configura MAIL_MODE=resend, PUBLIC_FRONTEND_URL=https://..., MAIL_FROM y RESEND_API_KEY.')
+    elif MAIL_MODE == 'gmail':
+        if not FRONTEND_URL.startswith('https://') or not MAIL_FROM or not GMAIL_APP_PASSWORD:
+            raise RuntimeError('En Render configura MAIL_MODE=gmail, PUBLIC_FRONTEND_URL=https://..., MAIL_FROM y GMAIL_APP_PASSWORD.')
+    else:
+        raise RuntimeError('En Render configura MAIL_MODE=resend o MAIL_MODE=gmail.')
 
 def send_mail(recipient: str, subject: str, message: str) -> None:
     if MAIL_MODE == 'development' and APP_ENV == 'local':
@@ -28,6 +36,23 @@ def send_mail(recipient: str, subject: str, message: str) -> None:
         try: box.chmod(0o600)
         except OSError: pass
         return
+
+    if MAIL_MODE == 'gmail':
+        if not MAIL_FROM or not GMAIL_APP_PASSWORD:
+            raise RuntimeError('El proveedor de correo Gmail no está configurado.')
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = MAIL_FROM
+        msg['To'] = recipient
+        msg.set_content(message)
+        try:
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=12) as smtp:
+                smtp.login(MAIL_FROM, GMAIL_APP_PASSWORD)
+                smtp.send_message(msg)
+        except Exception as exc:
+            raise RuntimeError('No fue posible enviar el correo. Reintenta más tarde.') from exc
+        return
+
     if MAIL_MODE != 'resend' or not MAIL_FROM or not RESEND_API_KEY:
         raise RuntimeError('El proveedor de correo no está configurado.')
     data = json.dumps({'from': MAIL_FROM, 'to': [recipient], 'subject': subject, 'text': message}).encode('utf-8')
@@ -41,7 +66,6 @@ def send_mail(recipient: str, subject: str, message: str) -> None:
                 raise RuntimeError('El proveedor no aceptó el correo.')
     except (HTTPError, URLError, TimeoutError) as exc:
         raise RuntimeError('No fue posible enviar el correo. Reintenta más tarde.') from exc
-
 
 def link(page: str, token: str) -> str:
     from urllib.parse import quote
