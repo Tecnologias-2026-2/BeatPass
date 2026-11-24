@@ -397,5 +397,32 @@ Si encuentras un bug, por favor abre un [Issue](https://github.com/beatpass/issu
 - Screenshot (si aplica)
 
 ---
+EJECUTABLE PARA WINDOWS
+
+BeatPass dispone de una versión autónoma para Windows, disponible en la sección Releases del repositorio.
+
+Características
+
+Empaquetado mediante PyInstaller.
+
+Frontend y backend integrados.
+
+Base de datos SQLite persistente.
+
+Cuenta de demostración verificada.
+
+Buzón local de verificación de correo.
+
+Inicio automático del servidor.
+
+No requiere instalar Python ni Git.
+
+Descarga
+
+https://github.com/Tecnologias-2026-2/BeatPass/releases
+
+Responsable del empaquetado y distribución
+
+Juan Camilo Arango Ortiz.
 
 **Hecho con ❤️ por el equipo de BeatPass**
