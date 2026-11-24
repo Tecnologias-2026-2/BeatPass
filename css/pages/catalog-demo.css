@@ -1,0 +1,24 @@
+/* FLUJO: Presenta tarjetas reales y de ejemplo; su JS es catalog-demo.js. */
+/* Vista de ejemplo: mismas tarjetas del catálogo y del carrusel de destacados. */
+.catalog-container{min-width:0;}
+.bp-catalog-note{grid-column:1/-1;color:var(--text-secondary);font-size:.95rem;line-height:1.7;padding:1rem;}
+.bp-catalog-card{min-width:0;display:flex;flex-direction:column;}
+.bp-catalog-card .event-image-wrapper{height:190px;}
+.bp-catalog-card .event-image{display:block;}
+.bp-catalog-card .event-card-content{flex:1;display:flex;flex-direction:column;gap:.6rem;}
+.bp-catalog-card .event-card-title{font-size:1.13rem;line-height:1.32;margin:0;}
+.bp-catalog-card .event-card-details{margin-bottom:1.15rem;}
+.bp-catalog-card .event-card-footer{margin-top:auto;padding:1rem 0 0;gap:.7rem;}
+.bp-catalog-card .event-card-footer .btn{min-height:42px;white-space:normal;text-align:center;}
+@media (max-width:768px){.catalog-container{padding-inline:1rem;}.catalog-content{gap:2rem;}.search-filter-bar{min-width:0;}.search-input-wrapper{min-width:0;}.category-filters{padding-bottom:.4rem;}.category-btn{white-space:nowrap;flex:none;}}
+
+/* Toda la tarjeta es un único enlace (teclado, imagen, texto y acción). */
+.bp-catalog-card .bp-event-card__link{height:100%;}
+.bp-catalog-card .event-card-footer{flex-wrap:wrap;}
+.bp-catalog-card .bp-card-cta{margin-left:auto;}
+
+/* Fase 2E: paginación reutiliza el aspecto de botones del catálogo. */
+.bp-catalog-more { display:block; margin:1.75rem auto; padding:.75rem 1.5rem; border:1px solid var(--border-color,#2563eb); border-radius:.75rem; background:transparent; color:inherit; cursor:pointer; font-weight:700; }
+.bp-catalog-more:hover { background:rgba(34,211,238,.1); }
+.bp-catalog-more:disabled { opacity:.55; cursor:wait; }
+.bp-catalog-more[hidden] { display:none; }

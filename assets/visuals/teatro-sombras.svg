@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Escenario teatral con cortinas rojas y personajes bajo un foco de luz">
+<defs>
+ <linearGradient id="g" x2="0" y2="1"><stop stop-color="#070c22"/><stop offset=".65" stop-color="#342038"/><stop offset="1" stop-color="#170e22"/></linearGradient>
+ <linearGradient id="red" x1="0" x2="1"><stop stop-color="#4e0919"/><stop offset=".25" stop-color="#9b203b"/><stop offset=".54" stop-color="#430c22"/><stop offset=".8" stop-color="#b32b3d"/><stop offset="1" stop-color="#3c091f"/></linearGradient>
+ <linearGradient id="stage" x2="0" y2="1"><stop stop-color="#84516c"/><stop offset="1" stop-color="#100a18"/></linearGradient>
+ <radialGradient id="light"><stop stop-color="#ffeabb" stop-opacity=".85"/><stop offset=".6" stop-color="#ffa76a" stop-opacity=".28"/><stop offset="1" stop-color="#ff8860" stop-opacity="0"/></radialGradient>
+ <linearGradient id="ray" x2=".5" y2="1"><stop stop-color="#f7e5ce" stop-opacity=".28"/><stop offset="1" stop-color="#f7e5ce" stop-opacity="0"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="30"/></filter>
+ <pattern id="pleats" width="108" height="900" patternUnits="userSpaceOnUse"><path d="M0 0Q55 450 10 900 M54 0Q105 420 68 900" stroke="#f7b8b2" stroke-opacity=".09" stroke-width="25" fill="none"/></pattern>
+</defs>
+<rect width="1600" height="900" fill="url(#g)"/>
+<ellipse cx="930" cy="410" rx="460" ry="460" fill="url(#light)"/>
+<path d="M820 0 420 800 1350 800 1100 0Z" fill="url(#ray)"/>
+<path d="M0 0H1600V135Q1200 200 800 130Q400 200 0 135Z" fill="url(#red)"/>
+<path d="M0 0H325Q268 262 350 552L230 900H0Z" fill="url(#red)"/>
+<path d="M1290 0H1600V900H1370L1240 520Q1320 248 1290 0Z" fill="url(#red)"/>
+<path d="M0 0H325Q268 262 350 552L230 900H0Z M1290 0H1600V900H1370L1240 520Q1320 248 1290 0Z" fill="url(#pleats)"/>
+<path d="M0 750Q500 715 800 740Q1250 700 1600 750V900H0Z" fill="url(#stage)"/>
+<ellipse cx="950" cy="756" rx="340" ry="40" fill="#e0b6a0" opacity=".24" filter="url(#blur)"/>
+<g fill="#100d22">
+ <ellipse cx="850" cy="390" rx="58" ry="68"/>
+ <path d="M791 448Q850 423 902 450L945 701 890 745 798 746 747 705Z"/>
+ <path d="M781 490 666 595 676 612 826 554Z M897 487 1033 550 1030 569 877 552Z"/>
+ <path d="M807 703 792 805 830 812 865 700Z M880 708 917 815 947 805 904 695Z"/>
+</g>
+<g fill="#201123">
+ <ellipse cx="1089" cy="443" rx="49" ry="58"/>
+ <path d="M1043 490Q1093 477 1132 495L1170 731 1050 731Z"/>
+ <path d="M1063 516 965 613 980 629 1091 567Z M1130 514 1245 569 1237 586 1098 551Z"/>
+ <path d="M1051 720 1032 820 1066 826 1100 712Z M1120 720 1162 825 1198 814 1164 710Z"/>
+</g>
+<circle cx="953" cy="195" r="100" fill="#fbd9b0" opacity=".15" filter="url(#blur)"/>
+<g fill="#e8b17a" opacity=".55"><circle cx="970" cy="190" r="3"/><circle cx="1020" cy="230" r="3"/><circle cx="772" cy="325" r="2"/><circle cx="1210" cy="330" r="4"/></g>
+<path d="M350 790Q850 748 1250 795" fill="none" stroke="#f6a88d" stroke-opacity=".23" stroke-width="8"/>
+</svg>

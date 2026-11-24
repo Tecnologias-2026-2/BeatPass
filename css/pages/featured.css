@@ -1,0 +1,56 @@
+/* FLUJO: Carrusel visual de destacados.html; datos demo generados desde demo-events.json. */
+/* Hero de destacados: cuatro slides HTML sin temporizadores JavaScript.
+   Cada slide ocupa 20s de un ciclo de 80s. No hay pausas ni controles manuales. */
+.bp-featured{position:relative;isolation:isolate;min-height:clamp(510px,59vw,660px);overflow:hidden;background:#0c1f3b;color:#fff;}
+.bp-featured__slide{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;animation:bp-featured-cycle 80s linear infinite;animation-delay:var(--slide-delay,0s);}
+@keyframes bp-featured-cycle{
+  0%,24.99%{opacity:1;visibility:visible;pointer-events:auto}
+  25%,99.99%{opacity:0;visibility:hidden;pointer-events:none}
+  100%{opacity:1;visibility:visible;pointer-events:auto}
+}
+.bp-featured__slide .hero-background{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center;background:#122947;}
+.bp-featured__slide .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,13,34,.95),rgba(7,21,44,.83) 33%,rgba(7,21,44,.30) 78%,rgba(5,14,34,.12)),linear-gradient(0deg,rgba(4,12,27,.32),transparent 42%);}
+.bp-featured__slide .hero-content{position:relative;z-index:2;padding:clamp(4rem,8vw,7rem) clamp(3.5rem,8vw,7rem);max-width:1320px;width:100%;height:100%;}
+.bp-featured__slide .hero-text-wrapper{max-width:580px;display:flex;flex-direction:column;align-items:flex-start;gap:1.25rem;}
+.bp-featured__slide .hero-title{font-size:clamp(2.1rem,4.3vw,4.1rem);color:#fff;text-wrap:balance;margin:0;}
+.bp-featured__slide .hero-description,.bp-featured__slide .detail-item{color:#e5edf8;}
+.bp-featured__slide .detail-item{display:flex;align-items:center;gap:.7rem;}
+.bp-featured__slide .detail-item>span[aria-hidden]{font-size:1.45rem;color:#26d7f6;line-height:1;}
+.bp-featured__slide .price-section{display:flex;align-items:baseline;flex-direction:row;gap:.5rem;}
+.bp-featured__slide .price-label{color:#ccd7ed;}
+.bp-featured__slide .price-value{color:#45e4ff;}
+.bp-featured__slide .hero-actions{display:flex;gap:1.8rem;align-items:center;flex-wrap:wrap;}
+.bp-event-card{min-width:0;}
+.bp-event-card__link{display:flex;flex-direction:column;flex:1;color:inherit;text-decoration:none;min-width:0;outline-offset:-3px;}
+.bp-event-card__link:hover{color:inherit;}
+.bp-event-card__link:focus-visible{outline:3px solid #00d4ff;}
+.bp-price-from{display:flex;flex-direction:row;align-items:baseline;gap:.38rem;color:var(--text-primary);line-height:1.15;}
+.bp-price-from span{font-size:.78rem;font-weight:550;color:var(--text-secondary);}
+.bp-price-from strong{font-size:1.3rem;color:#04cfed;font-weight:850;}
+.bp-card-cta{display:inline-flex;gap:.5rem;align-items:center;justify-content:center;white-space:nowrap;color:#07182b;background:#00cef2;border-radius:10px;font-size:.88rem;font-weight:800;padding:.75rem .9rem;}
+.bp-event-card__link:hover .bp-card-cta,.bp-event-card__link:focus-visible .bp-card-cta{background:#6eeaff;}
+.featured-catalog-cta{display:flex;align-items:center;justify-content:center;padding-top:.4rem;}
+.featured-catalog-cta .btn{min-width:225px;justify-content:center;gap:.8rem;}
+.featured-sample-note{font-size:.82rem;text-align:center;color:var(--text-secondary);line-height:1.6;margin-top:-2rem;}
+@media (max-width:720px){
+ .bp-featured{min-height:595px;}
+ .bp-featured__slide .hero-content{padding:4.2rem 1.8rem 4.5rem;}
+ .bp-featured__slide .hero-title{font-size:clamp(2.05rem,8vw,3rem);}
+ .bp-featured__slide .hero-description{font-size:.96rem;line-height:1.65;}
+ .bp-featured__slide .hero-background{object-position:66% center;}
+ .bp-featured__slide .hero-overlay{background:linear-gradient(90deg,rgba(6,17,40,.94),rgba(6,17,40,.74) 64%,rgba(6,17,40,.35));}
+ .featured-sample-note{margin-top:-1rem;}
+}
+@media (max-width:390px){.bp-featured__slide .hero-content{padding:3.5rem 1.25rem 4rem;}.bp-featured__slide .hero-title{font-size:2rem;}.bp-featured__slide .hero-description{font-size:.9rem;}.bp-card-cta{padding:.7rem .65rem;font-size:.81rem;}}
+/* Accesibilidad: con reducir movimiento, primera diapositiva fija y sin rotación. */
+@media (prefers-reduced-motion:reduce){.bp-featured__slide{animation:none!important;opacity:0;visibility:hidden;pointer-events:none;}.bp-featured__slide:first-child{opacity:1;visibility:visible;pointer-events:auto;}}
+
+/* Eventos reales aprobados se muestran separados de los cuatro ejemplos del carrusel. */
+.bp-published-events { padding:2rem 0 1rem; }
+.bp-published-events[hidden] { display:none; }
+
+.bp-public-hero{background:linear-gradient(105deg,#061128 0%,#0b2449 66%,#0b4159 100%);color:#fff;min-height:420px;display:flex;align-items:center;padding:5.5rem clamp(1.5rem,7vw,8rem);}
+.bp-public-hero__inner{max-width:780px;display:grid;justify-items:start;gap:1.35rem;}
+.bp-public-hero__inner h1{font-size:clamp(2.4rem,5vw,4.4rem);line-height:1.09;letter-spacing:-.035em;color:#fff;margin:0;}
+.bp-public-hero__inner p{max-width:58ch;font-size:clamp(1rem,1.75vw,1.16rem);color:#c5dcf4;line-height:1.65;margin:0;}
+@media(max-width:600px){.bp-public-hero{min-height:460px;padding:4.5rem 1.5rem;}}

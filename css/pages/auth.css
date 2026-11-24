@@ -1,0 +1,18 @@
+/* FLUJO: Estilos de login/register/recuperación; lógica en auth-ui.js. */
+/* ESTILOS DE PÁGINA — autenticación y recuperación.
+   Usa los átomos/moléculas/organismos de css/atomic/.
+   No modifica la bienvenida ni el resto de la plataforma. */
+.bp-auth--register .bp-auth__layout {grid-template-columns:minmax(0,.66fr) minmax(0,1fr);width:min(100%,1100px);}
+.bp-auth--register .bp-auth-card {padding-block:clamp(1.3rem,2.6vw,2rem);}
+.bp-auth--recovery .bp-auth__layout {width:min(100%,960px);}
+.bp-auth__mode-note {color:#b9cee2;font-size:.78rem;line-height:1.6;}
+.bp-auth__mode-note strong {color:#75eafa;}
+.bp-auth__divider {display:flex;align-items:center;gap:.8rem;color:#8fa4bd;font-size:.72rem;}
+.bp-auth__divider::before,.bp-auth__divider::after {content:'';height:1px;background:#314155;flex:1;}
+.bp-auth__return {margin-top:.6rem;display:inline-flex;align-items:center;gap:.5rem;color:#73e8ff;font-size:.84rem;}
+.bp-recovery-preview {display:grid;gap:1.15rem;}
+.bp-recovery-preview__icon {display:grid;place-items:center;width:58px;height:58px;border-radius:17px;
+  background:#143044;border:1px solid #2b819a;font-size:1.7rem;color:#86eeff;}
+.bp-recovery-preview[hidden] {display:none;}
+.bp-password-rules {font-size:.75rem;color:#b1c2d8;line-height:1.5;}
+@media(max-width:840px){.bp-auth--register .bp-auth__layout{grid-template-columns:1fr;width:min(100%,620px)}}
