@@ -10,6 +10,7 @@ async function init(){
   status.textContent='Consultando eventos pendientes...';root.replaceChildren();
   try{
    const me=await api.me();if(!me.roles.includes('administracion'))throw new Error('Solo administración puede revisar eventos.');
+   root.closest('.bp-review-section').hidden=false;
    const rows=await api.pendingEventReviews();
    status.textContent=rows.length?`${rows.length} propuesta(s) pendientes de aprobación.`:'No hay eventos pendientes.';
    rows.forEach(item=>{

@@ -16,14 +16,14 @@ def test_render_build_excludes_fake_events(tmp_path):
     result = subprocess.run([sys.executable,'tools/build_static.py'],cwd=ROOT,env=env,
         capture_output=True,text=True)
     assert result.returncode == 0, result.stderr
-    published_html = (ROOT/'public/pages/destacados.html').read_text()
+    published_html = (ROOT/'public/pages/destacados.html').read_text(encoding='utf-8')
     assert 'Tu próximo evento comienza aquí' in published_html
     assert 'Noche de Rock Clásico' not in published_html
     assert 'sandbox_init_point' not in published_html
-    js = (ROOT/'public/js/core/config.js').read_text()
+    js = (ROOT/'public/js/core/config.js').read_text(encoding='utf-8')
     assert 'https://api-ejemplo.onrender.com/api' in js
     assert '127.0.0.1' not in js
-    examples = (ROOT/'public/js/core/demo-events.js').read_text()
+    examples = (ROOT/'public/js/core/demo-events.js').read_text(encoding='utf-8')
     assert 'Noche de Rock Clásico' not in examples
     assert not (ROOT/'public/style-guide.html').exists()
 

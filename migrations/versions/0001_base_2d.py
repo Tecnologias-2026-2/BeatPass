@@ -19,7 +19,7 @@ def upgrade():
     if inspector.has_table('users'):
         columns = {row['name'] for row in inspector.get_columns('users')}
         if 'email_verified_at' not in columns:
-            op.execute('ALTER TABLE users ADD COLUMN email_verified_at TIMESTAMP')
+            op.execute('ALTER TABLE users ADD COLUMN email_verified_at TIMESTAMP WITH TIME ZONE')
         if 'token_version' not in columns:
             op.execute('ALTER TABLE users ADD COLUMN token_version INTEGER NOT NULL DEFAULT 0')
     # Idempotente en instalaciones antiguas que main.init_schema ya inicializó.

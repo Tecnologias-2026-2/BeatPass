@@ -44,8 +44,10 @@ TOKEN_EXP_HOURS = 8
 
 # El remitente y el dominio público se definen mediante variables de entorno.
 
-# Fase 2D: bloqueado por defecto fuera de local; nunca es un pago real.
-DEMO_CHECKOUT_ENABLED = APP_ENV == 'local' or os.getenv('ENABLE_DEMO_CHECKOUT', 'false').lower() == 'true'
+# Fase 2D: solo puede activarse en local; fuera de local la variable se ignora.
+# La confirmación demo nunca debe quedar expuesta en el despliegue público.
+DEMO_CHECKOUT_ENABLED = (APP_ENV == 'local'
+                         and os.getenv('ENABLE_DEMO_CHECKOUT', 'true').strip().lower() != 'false')
 
 # Fase 2E: desactivado por defecto; las credenciales TEST se configuran manualmente.
 # IMPORTANTE: Mercado Pago puede usar APP_USR tanto en test como en producción.

@@ -19,6 +19,7 @@
       if (!me.roles.includes('administracion')) {
         status.textContent = 'Acceso restringido: se requiere rol de administración.'; return;
       }
+      list.hidden = false;
       const applications = await api.pendingApplications();
       status.textContent = applications.length ? `${applications.length} solicitud(es) pendientes.` : 'No hay solicitudes pendientes.';
       applications.forEach(item => {

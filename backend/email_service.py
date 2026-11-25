@@ -14,9 +14,17 @@ FRONTEND_URL = os.getenv('PUBLIC_FRONTEND_URL', 'http://127.0.0.1:8001' if APP_E
 MAIL_FROM = os.getenv('MAIL_FROM', '').strip()
 RESEND_API_KEY = os.getenv('RESEND_API_KEY', '').strip()
 
-if APP_ENV != 'local':
-    if MAIL_MODE != 'resend' or not FRONTEND_URL.startswith('https://') or not MAIL_FROM or not RESEND_API_KEY:
-        raise RuntimeError('En Render configura MAIL_MODE=resend, PUBLIC_FRONTEND_URL=https://..., MAIL_FROM y RESEND_API_KEY.')
+
+def _require_provider() -> None:
+    """Se valida al enviar, no al importar: la API debe arrancar aunque falte el correo.
+
+    Así un despliegue sin MAIL_FROM o RESEND_API_KEY sigue sirviendo catálogo y panel,
+    y solo los endpoints que envían correo responden 503 con un motivo claro.
+    """
+    if MAIL_MODE != 'resend' or not MAIL_FROM or not RESEND_API_KEY:
+        raise RuntimeError('Configura MAIL_MODE=resend, MAIL_FROM y RESEND_API_KEY para enviar correo.')
+    if APP_ENV != 'local' and not FRONTEND_URL.startswith('https://'):
+        raise RuntimeError('Configura PUBLIC_FRONTEND_URL=https://... para generar enlaces de correo válidos.')
 
 
 def send_mail(recipient: str, subject: str, message: str) -> None:
@@ -28,12 +36,11 @@ def send_mail(recipient: str, subject: str, message: str) -> None:
         try: box.chmod(0o600)
         except OSError: pass
         return
-    if MAIL_MODE != 'resend' or not MAIL_FROM or not RESEND_API_KEY:
-        raise RuntimeError('El proveedor de correo no está configurado.')
+    _require_provider()
     data = json.dumps({'from': MAIL_FROM, 'to': [recipient], 'subject': subject, 'text': message}).encode('utf-8')
     req = Request('https://api.resend.com/emails', data=data, headers={
         'Authorization': f'Bearer {RESEND_API_KEY}', 'Content-Type': 'application/json',
-        'User-Agent': 'BeatPass/2.1'
+        'User-Agent': 'BeatPass/2.6.0-2E'
     }, method='POST')
     try:
         with urlopen(req, timeout=12) as result:

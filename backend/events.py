@@ -1,4 +1,4 @@
-"""Fase 2B: editor, revisiones, aprobación y lectura pública de eventos.
+"""Eventos: editor, revisiones, publicación directa y lectura pública.
 
 Invariante: solo `Event.published_revision_id` expone datos públicamente.
 Cada modificación posterior queda aislada hasta una nueva aprobación.
@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, Query
 from PIL import Image, UnidentifiedImageError
 from sqlalchemy import select, update, func, or_
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from .database import get_db
 from .models import User, AuditLog
@@ -163,7 +164,11 @@ def save_event(event_id: int, body: EventData, db: Session = Depends(get_db), ow
     revision.status = 'draft'
     revision.review_reason = None
     db.add(AuditLog(actor_id=owner.id, action='event_draft_saved', target_type='event', target_id=event.id))
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(409, 'El evento cambió mientras se guardaba. Recarga y vuelve a intentarlo.') from exc
     return _summary(event, revision, db)
 
 
@@ -197,7 +202,7 @@ async def save_cover(event_id: int, request: Request, db: Session = Depends(get_
             if len(normalized) > MAX_COVER_BYTES:
                 raise ValueError('La fotografía es demasiado grande')
     except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError) as exc:
-        raise HTTPException(422, 'Sube una imagen JPG, PNG o WebP válida, de máximo 8 MB en origen.') from exc
+        raise HTTPException(422, 'Sube una imagen JPG, PNG o WebP válida. La versión optimizada no puede superar 3 MB.') from exc
     cover = db.get(EventCover, latest.id)
     if cover:
         cover.data = normalized

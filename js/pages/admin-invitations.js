@@ -7,6 +7,22 @@
   const status = document.getElementById('admin-invitation-status');
   const list = document.getElementById('admin-invitation-list');
   if (!form || !list) return;
+  const section = form.closest('section');
+
+  async function init() {
+    try {
+      const me = await api.me();
+      if (!me.roles.includes('administracion')) {
+        status.textContent = 'Acceso restringido: se requiere rol de administración.';
+        return;
+      }
+    } catch (error) {
+      status.textContent = error.message || 'No se pudo comprobar tu sesión.';
+      return;
+    }
+    section.hidden = false;
+    await refresh();
+  }
 
   async function refresh() {
     list.replaceChildren();
@@ -46,5 +62,5 @@
     } catch (error) { status.textContent = error.message; }
     finally { button.disabled = false; }
   });
-  refresh();
+  void init();
 })();

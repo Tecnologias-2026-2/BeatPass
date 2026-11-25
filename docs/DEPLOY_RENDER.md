@@ -23,4 +23,4 @@ El frontend y la API se despliegan desde GitHub con `render.yaml`. Este archivo,
 - Las portadas se guardan en PostgreSQL; planificar almacenamiento de objetos al aumentar volumen.
 - FastAPI debe servir HTTPS a través de Render; cookies y CORS se verifican desde las direcciones reales.
 - La reserva de inventario, Mercado Pago TEST y los boletos demo no equivalen a ventas definitivas ni a entradas válidas.
-- Crear trabajos de limpieza de reservas vencidas mediante `python -m backend.cli expire-holds` en un servicio programado cuando esté disponible.
+- Programar `python -m backend.cli expire-holds` como Cron Job de Render para liberar reservas vencidas; la limpieza perezosa ya se ejecuta en cada lectura de cupos.

@@ -9,7 +9,9 @@ async function init(){
  const form=$('admin-event-form');if(!form)return;
  const priceRoot=$('admin-price-rows'),notice=$('admin-status'),coverInput=$('event-cover-file'),previewImage=$('preview-image');
  let events=[], activeId=null, coverBlob=null, coverUrl=null, removeCover=false, coverLoading=false, coverDirty=false, rowNo=0, showErrors=false;
- const isAdmin=(await api.me()).roles.includes('administracion');
+ let isAdmin=false;
+ try{isAdmin=(await api.me()).roles.includes('administracion');}
+ catch(error){notice.textContent=error.message||'No se pudo comprobar tu sesión.';return;}
  const status=t=>notice.textContent=t;
  const val=id=>($(id)?.value||'').trim();
  function setCover(blob, note){

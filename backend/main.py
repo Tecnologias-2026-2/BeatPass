@@ -4,9 +4,9 @@ from contextlib import asynccontextmanager
 import re
 from jwt import InvalidTokenError
 from datetime import datetime, timezone, timedelta
-from fastapi import FastAPI, Depends, HTTPException, Header
+from fastapi import FastAPI, Depends, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select, inspect, exists
+from sqlalchemy import select, inspect, exists, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from .config import ALLOWED_ORIGINS, APP_ENV
@@ -24,26 +24,28 @@ ROLE_LABELS = {'cliente': 'Cliente', 'organizador': 'Organizador', 'administraci
 
 def init_schema():
     # Compatibilidad con esquemas de versiones anteriores.
-    # Solo en la transición inicial se consideran verificados los usuarios legados.
     inspector = inspect(engine)
+    # En Render la creación y actualización del esquema corresponde a Alembic.
+    # Se valida ANTES de escribir para no dejar cambios parciales en producción.
+    if APP_ENV != 'local' and not inspector.has_table('alembic_version'):
+        raise RuntimeError('Ejecuta python -m alembic upgrade head antes de iniciar la API.')
+    # Solo en la transición inicial se consideran verificados los usuarios legados.
     if inspector.has_table('users'):
         columns = {col['name'] for col in inspector.get_columns('users')}
         with engine.begin() as conn:
             if 'email_verified_at' not in columns:
-                conn.exec_driver_sql('ALTER TABLE users ADD COLUMN email_verified_at TIMESTAMP')
+                # Debe coincidir con User.email_verified_at (DateTime con zona horaria).
+                conn.exec_driver_sql('ALTER TABLE users ADD COLUMN email_verified_at TIMESTAMP WITH TIME ZONE')
                 # Conservamos el estado de cuentas anteriores durante actualizaciones compatibles.
                 # En producción no damos por verificado un correo sin haber confirmado su titularidad.
                 if APP_ENV == 'local':
                     conn.exec_driver_sql('UPDATE users SET email_verified_at = created_at')
             if 'token_version' not in columns:
                 conn.exec_driver_sql('ALTER TABLE users ADD COLUMN token_version INTEGER NOT NULL DEFAULT 0')
-    # En Render la creación y actualización del esquema corresponde a Alembic.
     # Las pruebas de desarrollo utilizan create_all; el despliegue usa Alembic.
-    if APP_ENV != 'local' and not inspector.has_table('alembic_version'):
-        raise RuntimeError('Ejecuta python -m alembic upgrade head antes de iniciar la API.')
     if APP_ENV == 'local':
         Base.metadata.create_all(bind=engine)
-    # Compatible con BD 2B: las revisiones antiguas no tenían capacidad.
+    # Compatible con bases anteriores: las revisiones antiguas no tenían capacidad.
     # Se importan como cero, nunca se inventa inventario vendible.
     from .cart import sync_inventory
     with SessionLocal() as db:
@@ -64,6 +66,7 @@ async def lifespan(_):
 
 app = FastAPI(title='BeatPass v2 API', version='2.6.0-2E', lifespan=lifespan,
               docs_url='/docs' if APP_ENV == 'local' else None,
+              openapi_url='/openapi.json' if APP_ENV == 'local' else None,
               redoc_url=None)
 app.add_middleware(CORSMiddleware, allow_origins=ALLOWED_ORIGINS, allow_credentials=False,
                    allow_methods=['GET','POST','PUT','PATCH','DELETE'], allow_headers=['Authorization','Content-Type'])
@@ -131,12 +134,16 @@ def register(body: RegisterBody, db: Session = Depends(get_db)):
 
 # Login: auth-ui.js -> api.login() -> validación de JWT en security.py.
 @app.post('/api/auth/login')
-def login(body: LoginBody, db: Session = Depends(get_db)):
+def login(body: LoginBody, request: Request, db: Session = Depends(get_db)):
     from .login_limiter import check_login, bad_login, good_login
-    check_login(db, body.email)
     user = db.scalar(select(User).where(User.email == body.email.strip().casefold()))
-    if not user or user.status != 'active' or not verify_password(user.password_hash, body.password):
-        bad_login(db, body.email)
+    credentials_ok = (user is not None and user.status == 'active'
+                      and verify_password(user.password_hash, body.password))
+    client_ip = request.client.host if request.client else ''
+    if not credentials_ok:
+        # El límite frena intentos fallidos; una contraseña correcta nunca queda bloqueada por un tercero.
+        check_login(db, body.email, client_ip)
+        bad_login(db, body.email, client_ip)
         raise HTTPException(401, 'Correo o contraseña incorrectos.')
     good_login(db, body.email)
     available = roles(user)
@@ -167,20 +174,38 @@ def pending_applications(db: Session = Depends(get_db), _: User = Depends(requir
 def review(application_id: int, decision: str, body: ReviewBody, db: Session, admin: User):
     application = db.get(OrganizerApplication, application_id)
     if not application: raise HTTPException(404, 'Solicitud no encontrada.')
-    if application.status != 'pending': raise HTTPException(409, 'Esta solicitud ya fue revisada.')
     if application.profile.user_id == admin.id:
         raise HTTPException(403, 'No puedes aprobar tu propia solicitud.')
+    if application.status != 'pending': raise HTTPException(409, 'Esta solicitud ya fue revisada.')
     if decision == 'rejected' and not body.reason.strip():
         raise HTTPException(422, 'Indica el motivo del rechazo.')
-    application.status = decision
-    application.reason = body.reason.strip() or None
-    application.reviewer_id = admin.id
-    application.reviewed_at = datetime.now(timezone.utc)
-    application.profile.status = 'approved' if decision == 'approved' else 'rejected'
-    if decision == 'approved' and 'organizador' not in roles(application.profile.user):
-        db.add(UserRole(user_id=application.profile.user_id, role_code='organizador'))
+    # Actualización condicional: dos administradores simultáneos no pueden resolver la misma solicitud.
+    claimed = db.execute(update(OrganizerApplication).where(
+        OrganizerApplication.id == application_id,
+        OrganizerApplication.status == 'pending').values(
+        status=decision, reason=body.reason.strip() or None, reviewer_id=admin.id,
+        reviewed_at=datetime.now(timezone.utc)))
+    if claimed.rowcount != 1:
+        db.rollback()
+        raise HTTPException(409, 'Esta solicitud ya fue revisada.')
+    db.execute(update(OrganizerProfile).where(OrganizerProfile.id == application.profile_id)
+               .values(status='approved' if decision == 'approved' else 'rejected'))
+    if decision == 'approved':
+        already = db.scalar(select(UserRole.id).where(UserRole.user_id == application.profile.user_id,
+                                                     UserRole.role_code == 'organizador'))
+        if already is None:
+            try:
+                # Savepoint: un rol concedido en paralelo no revierte la aprobación.
+                with db.begin_nested():
+                    db.add(UserRole(user_id=application.profile.user_id, role_code='organizador'))
+            except IntegrityError:
+                pass
     db.add(AuditLog(actor_id=admin.id, action=f'organizer_{decision}', target_type='organizer_application', target_id=application_id))
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(409, 'No fue posible guardar la revisión; actualiza la bandeja e inténtalo de nuevo.') from exc
     return {'message': 'Organizador aprobado.' if decision == 'approved' else 'Solicitud rechazada.',
             'status': decision}
 
@@ -205,11 +230,16 @@ def restore_application(application_id: int, db: Session = Depends(get_db),
         raise HTTPException(404, 'Solicitud no encontrada.')
     if application.profile.user_id == admin.id:
         raise HTTPException(403, 'No puedes revisar tu propia solicitud.')
-    if application.status != 'rejected':
+    # Actualización condicional: solo una petición recupera la solicitud y limpia la decisión anterior.
+    claimed = db.execute(update(OrganizerApplication).where(
+        OrganizerApplication.id == application_id,
+        OrganizerApplication.status == 'rejected').values(
+        status='pending', reason=None, reviewed_at=None, reviewer_id=None))
+    if claimed.rowcount != 1:
+        db.rollback()
         raise HTTPException(409, 'Solo se pueden recuperar solicitudes rechazadas.')
-    application.status = 'pending'
-    application.profile.status = 'pending'
-    # El motivo anterior permanece visible hasta una nueva decisión.
+    db.execute(update(OrganizerProfile).where(OrganizerProfile.id == application.profile_id)
+               .values(status='pending'))
     db.add(AuditLog(actor_id=admin.id, action='organizer_rejection_restored',
                     target_type='organizer_application', target_id=application_id))
     db.commit()
@@ -268,7 +298,7 @@ def verify_email(body: TokenBody, db: Session = Depends(get_db)):
                   AuthToken.purpose == 'email_verification', AuthToken.used_at.is_(None))).all():
         old.used_at = now()
     db.commit()
-    return {'message': 'Correo verificado. Ya puedes iniciar sesión.'}
+    return {'message': 'Correo verificado. Tu cuenta ya tiene la dirección confirmada.'}
 
 @app.post('/api/auth/forgot-password')
 def forgot_password(body: EmailBody, db: Session = Depends(get_db)):
@@ -374,7 +404,11 @@ def accept_admin_invitation(body: InvitationAcceptBody, db: Session = Depends(ge
     invitation.accepted_at = now()
     db.add(AuditLog(actor_id=user.id, action='admin_invitation_accepted',
                     target_type='admin_invitation', target_id=invitation.id))
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(409, 'La invitación ya fue aceptada.') from exc
     return {'message': 'Invitación aceptada. Puedes iniciar sesión como Administración.'}
 
 
