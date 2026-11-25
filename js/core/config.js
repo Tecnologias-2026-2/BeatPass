@@ -8,7 +8,7 @@
   const isGithubPages = host.endsWith('.github.io');
   const defaultApi = staticDevServer
     ? `${isFile ? 'http:' : global.location.protocol}//${host}:8010/api`
-    : (isGithubPages ? 'https://beatpass-1.onrender.com/api' : '/api');
+    : (isGithubPages ? 'https://beatpass-fvc6.onrender.com/api' : '/api');
   const app = global.BeatPass = global.BeatPass || {};
   app.config = Object.freeze({ apiBaseUrl: override || defaultApi });
 })(window);
