@@ -75,14 +75,14 @@
   <h1>Solicitudes de organizador</h1><p>Solo los administradores generales pueden aprobar o rechazar solicitudes.</p></div>
   <a href="dashboard.html" class="bp-button bp-button--primary">Volver al panel</a></div>
   <p id="review-status" role="status" aria-live="polite">Verificando permisos...</p>
-  <div id="review-applications" class="bp-review-list"></div>
-  <section class="bp-review-section" aria-labelledby="review-events-title" style="margin-top:3rem">
+  <div id="review-applications" class="bp-review-list" hidden></div>
+  <section class="bp-review-section" aria-labelledby="review-events-title" style="margin-top:3rem" hidden>
     <h2 id="review-events-title">Eventos pendientes de publicación</h2>
     <p>Los eventos enviados por organizadores necesitan revisión. Los administradores pueden publicar directamente sus propios eventos.</p>
     <p id="review-events-status" role="status" aria-live="polite">Cargando eventos...</p>
     <div id="review-events" class="bp-review-list"></div>
   </section>
-  <section class="bp-review-section" id="rechazados" aria-labelledby="rejected-title">
+  <section class="bp-review-section" id="rechazados" aria-labelledby="rejected-title" hidden>
     <h2 id="rejected-title">Rechazados</h2>
     <p>Recupera solicitudes o eventos rechazados por error. Volverán a Pendientes para una nueva decisión.</p>
     <h3>Cuentas de organizadores rechazadas</h3>
@@ -92,7 +92,7 @@
     <p id="review-rejected-events-status" role="status" aria-live="polite">Cargando...</p>
     <div id="review-rejected-events" class="bp-review-list"></div>
   </section>
-  <section class="bp-review-card" aria-labelledby="invitation-heading" style="margin-top:2rem">
+  <section class="bp-review-card" aria-labelledby="invitation-heading" style="margin-top:2rem" hidden>
     <h2 id="invitation-heading">Invitaciones de administración</h2>
     <p>Invita por correo a otra persona. Para aceptar permisos administrativos deberá demostrar la titularidad de su correo y confirmar su contraseña.</p>
     <form id="admin-invite-form" class="bp-auth-form" method="post" action="#">

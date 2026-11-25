@@ -53,6 +53,7 @@
   const es=document.getElementById('review-rejected-events-status');
   try{
    const me=await api.me();if(!me.roles.includes('administracion'))throw new Error('Acceso restringido a administración.');
+   document.getElementById('rechazados').hidden=false;
    await Promise.all([renderSection('account',accounts,as),renderSection('event',events,es)]);
   }catch(error){as.textContent=es.textContent=error.message;}
  }
