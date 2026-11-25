@@ -10,7 +10,7 @@ Ruta: `POST /api/organizers/events/{event_id}/publish` → `backend/events.py` �
 
 ## Rechazados
 
-En **Administración → Solicitudes y rechazados → Rechazados** aparecen cuentas de organizadores y eventos cuya última versión fue rechazada. **Volver a pendientes** no aprueba ni publica: devuelve la solicitud a la bandeja Pendientes para una nueva revisión. Se registra la recuperación en `audit_logs` y se conserva el motivo anterior para contexto.
+En **Administración → Solicitudes y rechazados → Rechazados** aparecen cuentas de organizadores y eventos cuya última versión fue rechazada. **Volver a pendientes** no aprueba ni publica: devuelve la solicitud a la bandeja Pendientes para una nueva revisión. Se registra la recuperación en `audit_logs` y se limpian el motivo, la fecha y el revisor de la decisión anterior.
 
 Rutas: `GET /api/admin/applications/rejected`, `POST /api/admin/applications/{id}/restore`, `GET /api/admin/events/rejected`, `POST /api/admin/events/reviews/{id}/restore`.
 
@@ -36,6 +36,6 @@ Registrar una cuenta `cliente` o solicitar ser `organizador` ya no exige verific
 
 ## GitHub y Render
 
-En el repositorio actual se observó el proyecto bajo `BeatPass_v2_Render_ready/`. Para activar GitHub Actions y el Blueprint estándar de Render, mueve **el contenido** de esa carpeta a la **raíz del repositorio** (también `.github/`, `render.yaml`, `backend/`, `pages/`, `js/`, etc.). No subas `backend/instance/`, `.env`, SQLite ni datos secretos.
+El proyecto debe estar en la **raíz del repositorio**: `render.yaml`, `.github/`, `backend/`, `pages/`, `js/`, `components/`, `css/` y `assets/` en el primer nivel, no dentro de una carpeta adicional. No subas `backend/instance/`, `.env`, SQLite ni datos secretos.
 
 Los cambios son archivos para importar a GitHub: no se han publicado ni desplegado automáticamente.

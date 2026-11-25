@@ -40,12 +40,17 @@ PRODUCTION_ORIGINS = [s.strip().rstrip('/') for s in os.getenv('ALLOWED_ORIGINS'
 if APP_ENV != 'local' and not PRODUCTION_ORIGINS:
     raise RuntimeError('Configura ALLOWED_ORIGINS (URL pública del frontend) en Render.')
 ALLOWED_ORIGINS = LOCAL_ORIGINS if APP_ENV == 'local' else PRODUCTION_ORIGINS
+# En local cualquier puerto de Live Server / http.server sirve; el despliegue nunca usa este patrón.
+LOCAL_ORIGIN_REGEX = r'^(https?://(localhost|127\.0\.0\.1)(:\d+)?|null)$'
+ALLOWED_ORIGIN_REGEX = LOCAL_ORIGIN_REGEX if APP_ENV == 'local' else None
 TOKEN_EXP_HOURS = 8
 
 # El remitente y el dominio público se definen mediante variables de entorno.
 
-# Fase 2D: bloqueado por defecto fuera de local; nunca es un pago real.
-DEMO_CHECKOUT_ENABLED = APP_ENV == 'local' or os.getenv('ENABLE_DEMO_CHECKOUT', 'false').lower() == 'true'
+# Fase 2D: solo puede activarse en local; fuera de local la variable se ignora.
+# La confirmación demo nunca debe quedar expuesta en el despliegue público.
+DEMO_CHECKOUT_ENABLED = (APP_ENV == 'local'
+                         and os.getenv('ENABLE_DEMO_CHECKOUT', 'true').strip().lower() != 'false')
 
 # Fase 2E: desactivado por defecto; las credenciales TEST se configuran manualmente.
 # IMPORTANTE: Mercado Pago puede usar APP_USR tanto en test como en producción.

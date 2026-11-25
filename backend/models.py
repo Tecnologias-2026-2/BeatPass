@@ -1,4 +1,4 @@
-"""Modelo mínimo de identidad y revisión de organizadores (2A)."""
+"""Modelos de identidad, roles y revisión de organizadores."""
 # FLUJO: main.py y profile.py guardan usuarios, roles y auditoría con estas tablas.
 from datetime import datetime, timezone
 from sqlalchemy import String, ForeignKey, DateTime, Text, UniqueConstraint

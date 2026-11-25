@@ -18,4 +18,9 @@ class Base(DeclarativeBase):
 
 def get_db():
     with SessionLocal() as db:
-        yield db
+        try:
+            yield db
+        except Exception:
+            # La sesión se descarta sin dejar cambios a medio confirmar.
+            db.rollback()
+            raise

@@ -42,18 +42,25 @@ def expire_orders(db: Session):
         PurchaseOrder.status == 'reserved', PurchaseOrder.expires_at <= utc_now()).limit(500)).all()
     changed = False
     for order_id in expired:
-        claimed = db.execute(update(PurchaseOrder).where(PurchaseOrder.id == order_id,
-                   PurchaseOrder.status == 'reserved', PurchaseOrder.expires_at <= utc_now())
-                   .values(status='expired'))
-        if claimed.rowcount != 1:
+        # Cada pedido se procesa en su propio savepoint: si uno falla, no se pierde
+        # el trabajo ya hecho sobre los anteriores ni se deja el lote a medio aplicar.
+        try:
+            with db.begin_nested():
+                claimed = db.execute(update(PurchaseOrder).where(PurchaseOrder.id == order_id,
+                           PurchaseOrder.status == 'reserved', PurchaseOrder.expires_at <= utc_now())
+                           .values(status='expired'))
+                if claimed.rowcount != 1:
+                    continue
+                lines = db.scalars(select(PurchaseOrderItem).where(
+                    PurchaseOrderItem.order_id == order_id)).all()
+                for line in lines:
+                    result = db.execute(update(TicketInventory).where(TicketInventory.id == line.inventory_id,
+                        TicketInventory.held >= line.quantity).values(held=TicketInventory.held - line.quantity))
+                    if result.rowcount != 1:
+                        # Fila inconsistente: se revierte solo este pedido y se reintenta luego.
+                        raise RuntimeError('held insuficiente')
+        except RuntimeError:
             continue
-        lines = db.scalars(select(PurchaseOrderItem).where(PurchaseOrderItem.order_id == order_id)).all()
-        for line in lines:
-            result = db.execute(update(TicketInventory).where(TicketInventory.id == line.inventory_id,
-                TicketInventory.held >= line.quantity).values(held=TicketInventory.held - line.quantity))
-            if result.rowcount != 1:
-                db.rollback()
-                raise HTTPException(500, 'No se pudo liberar una reserva caducada.')
         changed = True
     if changed:
         db.commit()
