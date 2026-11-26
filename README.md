@@ -1,6 +1,6 @@
 # BeatPass - Main Page Implementation
 
-![BeatPass](./assets/ChatGPT%20Image%2012%20may%202026%2C%2001_02_08%20a.m.png)
+![BeatPass](./assets/logo-principal.svg)
 
 > Implementación de la página de inicio de BeatPass - Plataforma de venta de entradas para eventos deportivos y culturales.
 
@@ -83,7 +83,7 @@ BeatPass/
 │   ├── login.html          # Página de login
 │   └── register.html       # Página de registro
 ├── assets/
-│   ├── ChatGPT Image 12 may 2026, 01_02_08 a.m.png  # Logo principal
+│   ├── logo-principal.svg                  # Logo principal
 │   └── README.md           # Guía de assets
 ├── docs/
 │   ├── README.md           # Documentación general

@@ -32,6 +32,8 @@
 .bp-event-detail__price-row>span{color:#2adfff;font-weight:850;font-size:1.17rem;white-space:nowrap;}
 
 /* Fase 2C: selector de zona y cantidad, integrado con la ficha existente. */
+/* El atributo hidden debe ganar siempre: los eventos demo no tienen inventario. */
+.bp-event-detail__cart-controls[hidden] {display:none;}
 .bp-event-detail__cart-controls {display:grid;grid-template-columns: minmax(0,1fr) minmax(100px,150px);gap:10px 16px;align-items:center;margin:20px 0;}
 .bp-event-detail__cart-controls label {color:var(--text-secondary);font-weight:600;font-size:.95rem;}
 .bp-event-detail__cart-controls select,.bp-event-detail__cart-controls input {width:100%;min-width:0;background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-light);border-radius:10px;padding:12px;font:inherit;}
