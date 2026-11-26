@@ -68,22 +68,38 @@
             }
         }
 
-        // Indicador de entradas oficial, actualizado desde la API.
+        // Las entradas demo se cuentan también sin sesión, desde el navegador.
+        function demoCount() {
+            try {
+                const rows = JSON.parse(global.localStorage.getItem('beatpass_demo_cart') || '[]');
+                if (!Array.isArray(rows)) return 0;
+                return rows.reduce((total, row) => total + (Number(row?.quantity) || 0), 0);
+            } catch (_) {
+                return 0;
+            }
+        }
+
+        // Indicador de entradas: backend cuando hay sesión + carrito demo local.
         async function refreshCartBadge() {
             const badge = header.querySelector('#header-cart-count');
             if (!badge) return;
             const api = global.BeatPass?.api;
             const currentToken = session?.token();
+            const localItems = demoCount();
             if (!currentToken || !currentUser() || !api?.cart) {
-                badge.hidden = true;badge.textContent = '';return;
+                badge.textContent = String(localItems);
+                badge.hidden = localItems === 0;
+                return;
             }
             try {
                 const cart = await api.cart();
                 if (session.token() !== currentToken) return;
-                badge.textContent = String(cart.total_items);
-                badge.hidden = cart.total_items === 0;
+                const total = Number(cart.total_items) + localItems;
+                badge.textContent = String(total);
+                badge.hidden = total === 0;
             } catch (_) {
-                badge.hidden = true;
+                badge.textContent = String(localItems);
+                badge.hidden = localItems === 0;
             }
         }
 
@@ -113,8 +129,10 @@
         });
         global.addEventListener('beatpass:session-changed', () => { refreshIdentity(); void refreshCartBadge(); });
         global.addEventListener('beatpass:cart-updated', () => void refreshCartBadge());
+        global.addEventListener('beatpass:demo-cart-updated', () => void refreshCartBadge());
         global.addEventListener('storage', event => {
             if (event.key === 'beatpass_token' || event.key === 'beatpass_user') { refreshIdentity(); void refreshCartBadge(); }
+            if (event.key === 'beatpass_demo_cart') void refreshCartBadge();
         });
         refreshIdentity();
         void refreshCartBadge();

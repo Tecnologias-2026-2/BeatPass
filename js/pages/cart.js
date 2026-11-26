@@ -18,6 +18,7 @@
     return button;
   }
   function imageFor(row) {
+    if (row.demo && row.image_url) return row.image_url;
     return app.api.assetUrl(row.image_url) || '../assets/visuals/concierto.svg';
   }
   function itemCard(item) {
@@ -92,44 +93,60 @@
         holdBox.append(btn);
       }
     }
-    async function refreshHold() {
+    async function refreshHold(hasDemo = false) {
       const [orders,config] = await Promise.all([app.api.myOrders(),app.api.checkoutConfig()]);
       demoEnabled=Boolean(config.demo_enabled);
       sandboxEnabled=Boolean(config.sandbox_enabled);
       activeOrder=orders.find(item => item.status === 'reserved') || null;
       showHold();
       if (checkout) {
-        checkout.disabled=!(demoEnabled || sandboxEnabled) || !!activeOrder || !rows.length || rows.some(item=>item.status !== 'active');
-        checkout.textContent= !(demoEnabled || sandboxEnabled) ? 'Reservas no habilitadas' : activeOrder ? 'Ya tienes una reserva activa' : 'Reservar cupos 15 minutos';
+        checkout.disabled=hasDemo || !(demoEnabled || sandboxEnabled) || !!activeOrder || !rows.length || rows.some(item=>item.status !== 'active');
+        checkout.textContent= hasDemo ? 'Las entradas demo no se pueden reservar'
+          : !(demoEnabled || sandboxEnabled) ? 'Reservas no habilitadas'
+          : activeOrder ? 'Ya tienes una reserva activa' : 'Reservar cupos 15 minutos';
       }
       entries.querySelectorAll('[data-action]').forEach(button=> {if(activeOrder) button.disabled=true;});
       clear.disabled=Boolean(activeOrder);
       return config;
     }
     let rows = []; let busy = false;
+    function demoRows() {
+      return app.demoCart ? app.demoCart.items().map(row => ({ ...row, line_total: row.quantity * row.unit_price })) : [];
+    }
+    function renderDemo(demo) {
+      rows = demo;
+      empty.style.display = demo.length ? 'none' : 'flex';
+      filled.style.display = demo.length ? 'grid' : 'none';
+      entries.replaceChildren(...demo.map(itemCard));
+      const subtotal = app.demoCart ? app.demoCart.subtotal() : 0;
+      $('subtotal').textContent = money(subtotal);
+      $('total').textContent = money(subtotal);
+      note.textContent = demo.length
+        ? 'Carrito de demostración: guardado solo en este navegador. No aparta cupos ni sirve para entrar al evento.'
+        : 'Tu carrito demo está vacío. Elige un evento y una zona para comenzar.';
+      clear.hidden = demo.length === 0;
+      clear.disabled = false;
+      if (checkout) { checkout.disabled = true; checkout.textContent = 'Inicia sesión para reservar'; }
+    }
     async function refresh() {
-      if (!app.session?.token()) {
-        filled.style.display = 'none'; empty.style.display = 'flex';
-        const title = empty.querySelector('.empty-cart-title');
-        if (title) title.textContent = 'Inicia sesión para ver tu carrito';
-        const desc = empty.querySelector('.empty-cart-description');
-        if (desc) desc.textContent = 'Para guardar tus entradas necesitas una cuenta BeatPass. Puedes registrarte o iniciar sesión.';
-        const link = empty.querySelector('.empty-cart-cta');
-        if (link) {link.href = 'login.html';link.querySelector('span').textContent = 'Iniciar sesión';}
-        return;
-      }
+      const demo = demoRows();
+      if (!app.session?.token()) { renderDemo(demo); return; }
       try {
-        const result = await app.api.cart(); rows = result.items;
+        const result = await app.api.cart();
+        rows = [...result.items, ...demo];
         empty.style.display = rows.length ? 'none' : 'flex';
         filled.style.display = rows.length ? 'grid' : 'none';
         entries.replaceChildren(...rows.map(itemCard));
-        $('subtotal').textContent = money(result.subtotal);
-        $('total').textContent = money(result.subtotal);
-        note.textContent = result.has_issues
-          ? 'Algunas entradas ya no están disponibles o cambiaron de versión. Elimínalas y vuelve a agregarlas. El subtotal no las incluye.'
-          : result.notice;
+        const subtotal = result.subtotal + (app.demoCart ? app.demoCart.subtotal() : 0);
+        $('subtotal').textContent = money(subtotal);
+        $('total').textContent = money(subtotal);
+        note.textContent = demo.length
+          ? 'Las entradas demo (guardadas en este navegador) no apartan cupos ni se pueden reservar. El resto del carrito sí es real.'
+          : result.has_issues
+            ? 'Algunas entradas ya no están disponibles o cambiaron de versión. Elimínalas y vuelve a agregarlas. El subtotal no las incluye.'
+            : result.notice;
         clear.hidden = rows.length === 0;
-        await refreshHold();
+        await refreshHold(demo.length > 0);
         filled.style.display = rows.length || activeOrder ? 'grid' : 'none';
         empty.style.display = rows.length || activeOrder ? 'none' : 'flex';
         global.dispatchEvent(new Event('beatpass:cart-updated'));
@@ -146,13 +163,18 @@
       const button = event.target.closest('[data-action]');
       if (!button || busy || activeOrder) return;
       const action = button.dataset.action;
-      const item = rows.find(row => row.id === Number(button.dataset.item));
+      const item = rows.find(row => String(row.id) === String(button.dataset.item));
       if (action !== 'clear' && !item) return;
       busy = true; button.disabled = true; note.textContent = 'Actualizando carrito...';
       try {
         if (action === 'clear') {
           if (!global.confirm('¿Vaciar todos los artículos del carrito?')) return;
-          await app.api.clearCart();
+          if (app.demoCart) app.demoCart.clear();
+          if (app.session?.token()) await app.api.clearCart();
+        } else if (item.demo) {
+          if (action === 'remove') app.demoCart?.remove(item.id);
+          else if (action === 'increase') app.demoCart?.update(item.id, item.quantity + 1);
+          else if (action === 'decrease') app.demoCart?.update(item.id, item.quantity - 1);
         } else if (action === 'remove') await app.api.removeCartItem(item.id);
         else if (action === 'increase') await app.api.updateCartItem(item.id, item.quantity + 1);
         else if (action === 'decrease') await app.api.updateCartItem(item.id, item.quantity - 1);
@@ -164,7 +186,7 @@
     }
     filled.addEventListener('click', event => void action(event));
     if (checkout) checkout.addEventListener('click',async()=> {
-      if(busy || !(demoEnabled || sandboxEnabled) || activeOrder) return;
+      if(busy || rows.some(item => item.demo) || !(demoEnabled || sandboxEnabled) || activeOrder) return;
       busy=true;checkout.disabled=true;note.textContent='Reservando cupos...';
       try {
         await app.api.checkoutHold();

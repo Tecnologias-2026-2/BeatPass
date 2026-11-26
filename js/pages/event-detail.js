@@ -55,6 +55,7 @@
     const buy = $('event-detail-buy');
     const status = $('event-detail-purchase-status');
     const note = $('event-detail-demo-note');
+    if (controls) controls.hidden = false;
     const description = document.querySelector('.bp-event-detail__prices-heading p');
     if (description) description.textContent = real ? 'Tarifas y cupos aprobados por BeatPass.' : 'Precios ilustrativos de demostración.';
     const prices = document.createDocumentFragment();
@@ -68,9 +69,43 @@
     if (list) list.replaceChildren(prices);
 
     if (!real) {
-      if (note) note.textContent = 'Este evento es un ejemplo visual. No tiene inventario ni venta disponible.';
-      if (buy) buy.disabled = true;
-      if (status) status.textContent = 'Las compras se habilitan únicamente para eventos reales aprobados.';
+      // Las zonas del selector son exactamente las mismas de "Zonas y precios".
+      if (select) {
+        select.replaceChildren();
+        (event.ticketTypes || []).forEach((type, index) => {
+          const option = el('option', `${type.name} · ${money(type.price)}`);
+          option.value = String(index);
+          select.append(option);
+        });
+        if (select.options.length) select.value = '0';
+      }
+      if (quantity) {
+        quantity.min = '1'; quantity.max = '10'; quantity.step = '1'; quantity.value = '1';
+      }
+      if (note) note.textContent = 'Evento de demostración: las entradas se guardan solo en este navegador y no son válidas para ingresar.';
+      if (!app.demoCart || !select || !select.options.length) {
+        if (buy) buy.disabled = true;
+        if (status) status.textContent = 'Las compras se habilitan únicamente cuando hay zonas disponibles.';
+        return;
+      }
+      if (status) status.textContent = 'Elige una zona y cantidad. Esta compra es una demostración local: no aparta cupos reales.';
+      if (buy) {
+        buy.disabled = false;
+        buy.addEventListener('click', () => {
+          const zone = event.ticketTypes[Number(select.value)];
+          const count = Number(quantity.value);
+          if (!zone || !Number.isInteger(count) || count < 1 || count > 10) {
+            if (status) status.textContent = 'Selecciona una zona y entre 1 y 10 entradas.';
+            return;
+          }
+          try {
+            app.demoCart.add(event, Number(select.value), count);
+            if (status) status.textContent = `${count} entrada${count === 1 ? '' : 's'} de ${zone.name} agregada${count === 1 ? '' : 's'} al carrito.`;
+          } catch (error) {
+            if (status) status.textContent = error.message;
+          }
+        });
+      }
       return;
     }
 
