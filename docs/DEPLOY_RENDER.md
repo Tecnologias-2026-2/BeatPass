@@ -6,8 +6,8 @@ El frontend y la API se despliegan desde GitHub con `render.yaml`. Este archivo,
 
 1. Crear repositorio privado; comprobar que no contiene `.env`, `.db`, secretos ni `backend/instance/`.
 2. Importar Blueprint `render.yaml` en Render. Configurar las variables marcadas `sync: false` en el panel.
-3. En la API establecer `PUBLIC_FRONTEND_URL=https://<web>.onrender.com`, `ALLOWED_ORIGINS=https://<web>.onrender.com`, `PUBLIC_API_URL=https://<api>.onrender.com`.
-4. En la web establecer `API_BASE_URL=https://<api>.onrender.com/api`. El build inyecta esa URL y retira los eventos de ejemplo.
+3. En la API establecer `PUBLIC_FRONTEND_URL=https://<web>.onrender.com` y `PUBLIC_API_URL=https://<api>.onrender.com`. `ALLOWED_ORIGINS` puede ampliar la lista, pero `backend/config.py` ya autoriza los dominios públicos del proyecto (`github.io` y `*.onrender.com` propios), así que la web de Render puede llamar a la API sin bloqueo CORS.
+4. La API sirve también la web generada en `/`: el build ejecuta `tools/build_static.py`, que inyecta `API_BASE_URL` y retira los eventos de ejemplo. Así frontend y backend comparten origen y no dependen de CORS. El servicio web estático se mantiene para el dominio `beatpass-1.onrender.com`.
 5. Crear dominio remitente y verificarlo en Resend; asignar `MAIL_FROM` al dominio verificado y `RESEND_API_KEY` a la clave secreta. La recuperación de contraseña y las verificaciones opcionales para invitaciones administrativas se envían por HTTPS. El registro público no envía correos obligatorios.
 6. Mantener `PAYMENT_MODE=disabled` hasta validar el flujo real de Sandbox; los QR no son entradas de acceso.
 

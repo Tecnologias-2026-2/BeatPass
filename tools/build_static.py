@@ -7,9 +7,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLISH = ROOT / 'public'
-API_BASE_URL = os.getenv('API_BASE_URL', '').strip().rstrip('/')
-if not API_BASE_URL.startswith('https://') or not API_BASE_URL.endswith('/api'):
-    raise SystemExit('API_BASE_URL debe utilizar HTTPS y terminar en /api.')
+# Valor por defecto del despliegue académico; Render puede sobrescribirlo.
+API_BASE_URL = os.getenv('API_BASE_URL', '').strip().rstrip('/') or 'https://beatpass-fvc6.onrender.com/api'
+if not (API_BASE_URL == '/api' or (API_BASE_URL.startswith('https://') and API_BASE_URL.endswith('/api'))):
+    raise SystemExit('API_BASE_URL debe ser /api o utilizar HTTPS y terminar en /api.')
 if PUBLISH.exists():
     shutil.rmtree(PUBLISH)
 PUBLISH.mkdir()

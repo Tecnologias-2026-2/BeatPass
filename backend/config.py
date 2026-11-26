@@ -33,12 +33,20 @@ if not SECRET_KEY:
         try: local_key.chmod(0o600)
         except OSError: pass
 
-# Orígenes de desarrollo; el despliegue utiliza exclusivamente ALLOWED_ORIGINS.
+# Orígenes de desarrollo; en producción se añaden los dominios públicos del proyecto.
 LOCAL_ORIGINS = ['null', 'http://localhost:5500', 'http://127.0.0.1:5500',
                  'http://localhost:8001', 'http://127.0.0.1:8001']
-PRODUCTION_ORIGINS = [s.strip().rstrip('/') for s in os.getenv('ALLOWED_ORIGINS', '').split(',') if s.strip()]
-if APP_ENV != 'local' and not PRODUCTION_ORIGINS:
-    raise RuntimeError('Configura ALLOWED_ORIGINS (URL pública del frontend) en Render.')
+# Dominios bajo nuestro control. ALLOWED_ORIGINS en Render puede ampliar la lista,
+# pero estos siempre deben funcionar para que la web desplegada pueda usar la API.
+PUBLIC_PROJECT_ORIGINS = [
+    'https://tecnologias-2026-2.github.io',
+    'https://beatpass-1.onrender.com',
+    'https://beatpass-fvc6.onrender.com',
+]
+PRODUCTION_ORIGINS = sorted(set(
+    [s.strip().rstrip('/') for s in os.getenv('ALLOWED_ORIGINS', '').split(',') if s.strip()]
+    + PUBLIC_PROJECT_ORIGINS
+))
 ALLOWED_ORIGINS = LOCAL_ORIGINS if APP_ENV == 'local' else PRODUCTION_ORIGINS
 # En local cualquier puerto de Live Server / http.server sirve; el despliegue nunca usa este patrón.
 LOCAL_ORIGIN_REGEX = r'^(https?://(localhost|127\.0\.0\.1)(:\d+)?|null)$'

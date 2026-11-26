@@ -431,3 +431,11 @@ app.include_router(orders_router)
 # FLUJO: cart.js -> payments.py -> webhook firmado -> orders.py; solo sandbox.
 from .payments import router as payments_router
 app.include_router(payments_router)
+
+# La misma API sirve la web pública generada por tools/build_static.py.
+# Las rutas /api/* se registran antes, por lo que nunca son sobrescritas.
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+_PUBLIC_DIR = Path(__file__).resolve().parents[1] / 'public'
+if _PUBLIC_DIR.is_dir():
+    app.mount('/', StaticFiles(directory=str(_PUBLIC_DIR), html=True), name='public')
