@@ -49,3 +49,4 @@ assert.equal(login.session.currentUser().fullname, 'Usuario Prueba');
 login.session.clear();
 assert.equal(login.session.currentUser(), null);
 console.log('OK: rutas, JSON seguro y sesión UI');
+require('./verify_demo_cart.js');
